@@ -1,4 +1,18 @@
-#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix, apa-stat, apa-mean, apa-t, apa-ci
+#import "../src/lib.typ": (
+  apa7,
+  apa-table,
+  apa-figure,
+  apa-appendix,
+  apa-stat,
+  apa-mean,
+  apa-t,
+  apa-ci,
+  apa-theorem,
+  apa-definition,
+  apa-proof,
+  eq,
+  deq,
+)
 
 #show: apa7.with(
   title: "Efectos de la Privación de Sueño en el Rendimiento Cognitivo",
@@ -27,6 +41,19 @@ Siguiendo los modelos de memoria de trabajo de @baddeley1974, la capacidad ejecu
 depende de ciclos de consolidación neural estables.
 
 == Marco Teórico
+
+#apa-definition(title: "Tiempo de Respuesta Efectivo", lang: "es")[
+  Se define la variable #eq("T", $T$) como el tiempo en milisegundos transcurrido entre la presentación
+  del estímulo visual y el registro de la respuesta motora.
+]
+
+#apa-theorem(title: "Invarianza de Carga", lang: "es")[
+  Si la tasa de error es acotada, el incremento de la latencia media es monótono respecto a la privación.
+]
+
+#apa-proof(lang: "es")[
+  La derivación se deduce aplicando las propiedades de monotonía sobre el modelo lineal.
+]
 
 La cita en bloque se utiliza para citas textuales de 40 palabras o más:
 

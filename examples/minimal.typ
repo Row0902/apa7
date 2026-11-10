@@ -9,6 +9,11 @@
   apa-t,
   apa-mean,
   apa-ci,
+  apa-theorem,
+  apa-definition,
+  apa-proof,
+  eq,
+  deq,
 )
 
 #show: apa7.with(
@@ -65,11 +70,21 @@ The study evaluated several distinct cognitive dimensions:#footnote[All experime
 
 The primary cognitive retention model is formalized in @eq-retention:
 
-#math.equation(
-  alt: "R of t equals R zero times e raised to the power of negative lambda times t",
-  block: true,
-  $ R(t) = R_0 e^(-lambda t) $,
-) <eq-retention>
+#deq("R of t equals R zero times e raised to the power of negative lambda times t", $ R(t) = R_0 e^(-lambda t) $) <eq-retention>
+
+#apa-definition(title: "Cognitive Retention Capacity")[
+  Let #eq("R of t", $R(t)$) denote the proportion of retained items at time #eq("t", $t$).
+  The capacity function is bounded and non-negative across all observation windows.
+]
+
+#apa-theorem(title: "Asymptotic Stability")[
+  For any strictly positive decay constant #eq("lambda", $lambda$), the system exhibits
+  asymptotic convergence to the baseline state.
+]
+
+#apa-proof[
+  The result follows directly by taking the limit as #eq("t approaches infinity", $t -> infinity$).
+]
 
 == Quantitative Results
 
