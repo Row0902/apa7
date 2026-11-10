@@ -1,6 +1,7 @@
 #import "apa7/layout.typ": apply-layout, format-running-head
 #import "apa7/typography.typ": apply-typography, default-font-size
 #import "apa7/heading.typ": apply-headings
+#import "apa7/cover.typ": render-cover, format-apa-date, render-authors
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///
@@ -24,6 +25,11 @@
   authors: (),
   paper-type: "student",
   running-head: none,
+  course: none,
+  instructor: none,
+  due-date: none,
+  author-note: none,
+  cover: true,
   font: "Times New Roman",
   font-size: auto,
   paper-size: "us-letter",
@@ -66,6 +72,19 @@
   )
 
   show: apply-headings
+
+  if cover {
+    render-cover(
+      paper-title: title,
+      authors: authors,
+      paper-type: paper-type,
+      course: course,
+      instructor: instructor,
+      due-date: if due-date != none { due-date } else { date },
+      author-note: author-note,
+      lang: lang,
+    )
+  }
 
   body
 }

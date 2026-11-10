@@ -7,6 +7,11 @@
   ),
   paper-type: "professional",
   running-head: "MINIMAL APA7",
+  author-note: [
+    Rowell Urbaez Reyes, Independent Researcher.
+
+    Correspondence concerning this article should be addressed to Rowell Urbaez Reyes, Email: contact\@example.com.
+  ],
   lang: "en",
 )
 
