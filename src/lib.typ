@@ -1,5 +1,6 @@
 #import "apa7/layout.typ": apply-layout, format-running-head
 #import "apa7/typography.typ": apply-typography, default-font-size
+#import "apa7/heading.typ": apply-headings
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///
@@ -63,6 +64,8 @@
     lang: lang,
     region: region,
   )
+
+  show: apply-headings
 
   body
 }
