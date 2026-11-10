@@ -9,6 +9,17 @@
 [![Accessibility](https://img.shields.io/badge/accessibility-PDF%2FUA--1-green?style=flat-square)](docs/accessibility.md)
 [![License](https://img.shields.io/badge/license-MIT-purple?style=flat-square)](LICENSE)
 
+<br />
+
+<p align="center">
+  <a href="#-quickstart">Quickstart</a> •
+  <a href="#-visual-gallery">Visual Gallery</a> •
+  <a href="#-documentation-guides">Documentation</a> •
+  <a href="#-core-features">Features</a> •
+  <a href="#-accessibility--screen-readers">Accessibility</a> •
+  <a href="#-module-architecture">Architecture</a>
+</p>
+
 </div>
 
 ---
@@ -21,21 +32,21 @@
 
 ## 🖼️ Visual Gallery
 
-Rendered directly from the included examples using Typst:
+Every preview below is compiled directly from our included Typst examples with native **PDF/UA-1** universal accessibility.
 
 <div align="center">
 
-| Student Title Page | Professional Title Page |
+| Student Paper Title Page | Professional Paper Title Page |
 | :---: | :---: |
-| <img src="assets/preview-student-cover.png" width="380" alt="Student Cover Page Preview" /> | <img src="assets/preview-professional-cover.png" width="380" alt="Professional Cover Page Preview" /> |
+| <img src="assets/preview-student-cover.png" width="380" alt="Preview of an APA 7 Student Title Page: Page number 1 in top-right header, bold centered paper title, author name Rowell Urbaez Reyes, institutional affiliation, course number, instructor name, and formatted assignment due date." /> | <img src="assets/preview-professional-cover.png" width="380" alt="Preview of an APA 7 Professional Title Page: Running head MINIMAL APA7 in top-left, page number 1 in top-right, bold centered title, author name, affiliation, and Author Note section in the lower third with correspondence details." /> |
 
 | Abstract & Keywords | Math & Statistics (APA 7) |
 | :---: | :---: |
-| <img src="assets/preview-abstract.png" width="380" alt="Abstract and Keywords Preview" /> | <img src="assets/preview-math-and-stats.png" width="380" alt="Math and Statistical Reporting Preview" /> |
+| <img src="assets/preview-abstract.png" width="380" alt="Preview of an APA 7 Abstract and Keywords page: Centered bold Level 1 heading Abstract, single unindented double-spaced paragraph, followed by an indented block with italicized label Keywords: and a list of five keywords." /> | <img src="assets/preview-math-and-stats.png" width="380" alt="Preview of an APA 7 Spanish Body page: Theoretical definition block, display trigonometric limit with upright sen(x)/x = 1, indented block quote with double spacing, Level 2 heading Resultados Empíricos, and in-text statistical reporting with t-test and 95% confidence interval." /> |
 
-| Tables and Figures |
+| Tables and Figures (APA 7 Compliant) |
 | :---: |
-| <img src="assets/preview-table-figure.png" width="550" alt="APA 7 Table and Figure Preview" /> |
+| <img src="assets/preview-table-figure.png" width="550" alt="Preview of an APA 7 Table and Figure page: Table 1 with bold number and italic title, three horizontal borders with no vertical lines, table note at bottom, followed by Figure 1 with caption on top, diagram, and note below." /> |
 
 </div>
 
@@ -43,16 +54,27 @@ Rendered directly from the included examples using Typst:
 
 ## 📖 Documentation Guides
 
-Explore our comprehensive, low-cognitive-load guides:
+We designed dedicated, low-cognitive-load guides organized with tables and practical snippets:
 
-- 🚀 **[Getting Started Guide](docs/getting-started.md):** Quickstart, minimal templates, and compilation commands.
-- 📚 **[API Reference](docs/api-reference.md):** Full documentation for every exported function, parameter, and helper.
-- ♿ **[Accessibility Guide](docs/accessibility.md):** PDF/UA-1 conformance, screen reader shortcuts (NVDA/JAWS), and speech descriptions.
-- 📐 **[STEM & Math Guide](docs/stem-and-math.md):** Calculus notation, linear algebra, theorem environments, proofs, and Spanish operators.
+<div align="center">
+
+| Guide | Description | Target Audience |
+| :--- | :--- | :--- |
+| 🚀 **[Getting Started](docs/getting-started.md)** | Quick setup, boilerplate templates, and CLI compile commands | First-time authors & students |
+| 📚 **[API Reference](docs/api-reference.md)** | Complete parameters, signatures, and default values | Developers & advanced users |
+| ♿ **[Accessibility Guide](docs/accessibility.md)** | PDF/UA-1 standard, screen reader shortcuts, and speech tagging | Screen reader users & accessibility audits |
+| 📐 **[STEM & Math Guide](docs/stem-and-math.md)** | Calculus formulas, linear algebra, theorem blocks, and Spanish math | Mathematics, physics & statistics courses |
+
+</div>
 
 ---
 
-## Quickstart
+## ⚡ Quickstart
+
+Get started immediately using one of our complete, production-ready templates:
+
+<details open>
+<summary><b>🎓 Student Paper Template (Click to expand / collapse)</b></summary>
 
 ```typst
 #import "@preview/apa7:0.1.0": *
@@ -82,42 +104,129 @@ Explore our comprehensive, low-cognitive-load guides:
 Sleep deprivation is a prevalent issue in modern academic environments...
 ```
 
+</details>
+
+<details>
+<summary><b>🔬 Professional Paper Template (Click to expand / collapse)</b></summary>
+
+```typst
+#import "@preview/apa7:0.1.0": *
+
+#show: apa7.with(
+  paper-type: "professional",
+  title: "Neural Correlates of Working Memory Retention",
+  running-head: "WORKING MEMORY RETENTION",
+  authors: (
+    (
+      name: "Rowell Urbaez Reyes",
+      affiliation: "Department of Psychology, University Example",
+    ),
+  ),
+  author-note: [
+    Rowell Urbaez Reyes, Independent Researcher.
+
+    Correspondence concerning this article should be addressed to Rowell Urbaez Reyes, Email: contact\@example.com.
+  ],
+  abstract: [
+    This paper presents a standardized implementation of APA 7th edition formatting...
+  ],
+  keywords: ("APA style", "Typst", "Academic writing", "PDF/UA-1"),
+  lang: "en",
+)
+
+= Introduction
+
+As demonstrated by #cite-narrative(<baddeley1974>, page: 48), working memory capacity...
+```
+
+</details>
+
+<details>
+<summary><b>🇪🇸 Plantilla en Español / Spanish Academic Template (Click to expand / collapse)</b></summary>
+
+```typst
+#import "@preview/apa7:0.1.0": *
+
+#show: apa7.with(
+  paper-type: "student",
+  title: "Efectos de la Privación de Sueño en el Rendimiento Cognitivo",
+  authors: (
+    (name: "Carolina Sánchez", affiliation: "Universidad Nacional"),
+    (name: "Carlos Pedraza", affiliation: "Universidad Nacional"),
+    (name: "Joaquín Rueda", affiliation: "Universidad Nacional"),
+  ),
+  course: "PSIC 201: Metodología de la Investigación",
+  instructor: "Dra. María Duarte",
+  due-date: datetime(year: 2026, month: 11, day: 9),
+  abstract: [
+    Este estudio analiza el impacto de la restricción crónica del sueño sobre la memoria...
+  ],
+  keywords: ("Privación de sueño", "Memoria de trabajo", "Psicología cognitiva"),
+  lang: "es", // Activa "y" sin coma serial, "Referencias", "Resumen", "Tabla", etc.
+)
+
+= Introducción
+
+La privación del sueño es un problema prevalente en el ámbito académico contemporáneo...
+```
+
+</details>
+
 ---
 
-## Features
+## ♿ Accessibility & Screen Readers
+
+`apa7` is engineered for **Universal Access** and conforms natively to **PDF/UA-1** (ISO 14289-1).
+
+When navigating compiled PDFs using screen readers like **NVDA**, **JAWS**, or **VoiceOver**:
+
+- <kbd>H</kbd> / <kbd>Shift</kbd> + <kbd>H</kbd>: Jump forward/backward between section headings.
+- <kbd>1</kbd> – <kbd>5</kbd>: Jump directly to specific heading levels.
+- <kbd>T</kbd> / <kbd>Shift</kbd> + <kbd>T</kbd>: Jump directly to data tables.
+- <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Arrow Keys</kbd>: Navigate table cells. Column headers are spoken automatically before each data cell.
+- Headers and page numbers are isolated as **PDF Artifacts** so speech synthesis is not interrupted between pages.
+
+```bash
+# Validate your document against the PDF/UA-1 standard
+typst compile --pdf-standard ua-1 paper.typ paper.pdf
+```
+
+---
+
+## 🌟 Core Features
 
 - **Strict Page Geometry:** Standard Letter (or A4) dimensions, 1-inch (2.54 cm) margins on all sides, and top-right page numbers.
-- **Student & Professional Paper Modes:** Configurable title pages following official APA 7 guidelines for both academic student submissions and peer-reviewed professional manuscripts.
-- **APA 7 Headings (Levels 1–5):** Automated formatting for all five heading levels (centering, alignment, bold, italics, indentations, and inline run-in headings).
+- **Dual Title Page Modes:** Student cover (course, instructor, due date) and Professional cover (running head, author note).
+- **APA 7 Headings (Levels 1–5):** Automated formatting for all five heading levels (Levels 4 & 5 run-in with automatic trailing period).
 - **Approved Typography:** Native presets for standard APA fonts (Times New Roman 12pt, Georgia 11pt, Calibri 11pt, Arial 11pt) with double line spacing (200%) and 0.5-inch paragraph indentation.
-- **Structured Tables & Figures:** Clean layouts supporting APA numbering, italicized titles, and three-tiered notes (*General*, *Specific*, *Probability*).
+- **Structured Tables & Figures:** Compliant layouts with captions on top, three-rule horizontal borders, zero vertical lines, and notes at the bottom.
 - **Abstract & Keywords:** Dedicated unindented abstract page with formatted keywords.
-- **Appendices:** Automatic labeling and formatting for supplementary materials with subordinate numbering (`Table A1`).
+- **Appendices:** Automatic labeling and formatting with subordinate numbering (`Table A1`, `Figure A1`).
 - **Statistical Reporting (`apa-stat`):** Automatic omission of leading zeros for bounded statistics ($p, r, \eta_p^2$), formatted confidence intervals, and $t$/$F$/$\chi^2$ tests.
 - **STEM Theorems & Proofs:** `#apa-theorem`, `#apa-definition`, `#apa-proof` with automatic QED symbol and Spanish operators (`sen`, `tg`, `mcd`, etc.).
-- **Universal Accessibility (PDF/UA-1):** Validated against the international standard for universal access with real tagged structure and screen reader navigation.
+- **Bilingual Localization (EN / ES):** Full support for English (Oxford comma and ampersands) and Spanish (RAE / normas-apa.org conjunction rules).
 
 ---
 
-## Architecture & Modules
+## 📂 Module Architecture
 
-The package is partitioned into focused, single-responsibility modules inside `src/apa7/`:
+The framework is strictly divided into cohesive modules, with every single file guaranteed under **400 lines**:
 
 ```text
 src/
-├── lib.typ             # Main entry point, orchestrator, and public facade
+├── lib.typ             # Main entry point, orchestrator, and public facade (150 lines)
 └── apa7/
-    ├── layout.typ      # Page dimensions, margins, running heads, and page numbers
-    ├── typography.typ  # Typeface settings, paragraph indents, quotes, and footnotes
-    ├── heading.typ     # Rules and show functions for Heading Levels 1 to 5
-    ├── cover.typ       # Student and Professional cover page renderers
-    ├── abstract.typ    # Abstract layout and keywords block
-    ├── table.typ       # APA compliant table styling and notes
-    ├── figure.typ      # APA compliant figure layouts and captions
-    ├── appendix.typ    # Appendix title and letter-sequencing utilities
-    ├── reference.typ   # References list, hanging indents, and citation helpers
-    ├── stat.typ        # Statistical reporting engine (apa-stat, apa-t, etc.)
-    └── theorem.typ     # STEM academic blocks and accessible math helpers
+    ├── layout.typ      # Page dimensions, margins, running heads, and page numbers (87 lines)
+    ├── typography.typ  # Typeface settings, paragraph indents, quotes, and footnotes (92 lines)
+    ├── heading.typ     # Rules and show functions for Heading Levels 1 to 5 (56 lines)
+    ├── cover.typ       # Student and Professional cover page renderers (162 lines)
+    ├── abstract.typ    # Abstract layout and keywords block (71 lines)
+    ├── table.typ       # APA compliant table styling and notes (93 lines)
+    ├── figure.typ      # APA compliant figure layouts and captions (80 lines)
+    ├── appendix.typ    # Appendix title and letter-sequencing utilities (69 lines)
+    ├── reference.typ   # References list, hanging indents, and citation helpers (102 lines)
+    ├── stat.typ        # Statistical reporting engine (apa-stat, apa-t, etc.) (204 lines)
+    └── theorem.typ     # STEM academic blocks and accessible math helpers (162 lines)
 ```
 
 ---
@@ -145,3 +254,9 @@ typst compile --pdf-standard ua-1 examples/minimal.typ examples/minimal.pdf
 ## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  <sub>Built with architectural discipline for universal access and academic rigor.</sub>
+</div>
