@@ -66,5 +66,27 @@
     first-line-indent: 0.5in,
   )
 
+  // APA 7 Section 8.27: Block Quotations (40 words or more)
+  // - Indented 0.5 inches from the left margin on the entire block.
+  // - Double-spaced, no quotation marks.
+  show quote.where(block: true): it => pad(left: 0.5in)[
+    #set par(first-line-indent: 0pt, leading: 1em, spacing: 1em)
+    #it.body
+  ]
+
+  // APA 7 Section 6.45: Display Equations
+  // - Numbered consecutively with parentheses flush right: (1), (2).
+  set math.equation(numbering: "(1)")
+
+  // APA 7 Sections 6.49-6.52: Lists and Seriation
+  // - Indented 0.5 inches matching standard paragraph indentation.
+  set list(indent: 0.5in, spacing: 1em)
+  set enum(indent: 0.5in, spacing: 1em)
+
+  // APA 7 Section 2.28: Footnotes
+  // - Numbered with superscripts (1, 2, 3), standard 10pt size at page bottom.
+  show footnote.entry: set text(size: 10pt)
+  set footnote.entry(separator: line(length: 2in, stroke: 0.5pt))
+
   body
 }

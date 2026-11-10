@@ -1,12 +1,12 @@
 #import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix
 
 #show: apa7.with(
-  title: "A Minimal APA 7 Document",
+  title: "A Comprehensive Demonstration of APA 7th Edition in Typst",
   authors: (
     (name: "Rowell Urbaez Reyes", affiliation: "Independent Researcher"),
   ),
   paper-type: "professional",
-  running-head: "MINIMAL APA7",
+  running-head: "APA 7 TYPST COMPREHENSIVE",
   author-note: [
     Rowell Urbaez Reyes, Independent Researcher.
 
@@ -16,8 +16,9 @@
     This paper presents a standardized, accessible implementation of the American
     Psychological Association (APA) 7th edition formatting guidelines within the
     Typst typesetting ecosystem. The template enforces strict layout geometry,
-    dual-mode title pages, hierarchical headings, and universal accessibility
-    compliant with the PDF/UA-1 standard.
+    dual-mode title pages, hierarchical headings, accessible tables and figures,
+    hanging-indent references, and universal accessibility compliant with the
+    PDF/UA-1 standard.
   ],
   keywords: ("APA style", "Typst", "Academic writing", "Accessibility", "PDF/UA-1"),
   lang: "en",
@@ -25,30 +26,40 @@
 
 = Introduction
 
-This is the first paragraph of the body under Level 1 (Centered, Bold). According to
-the APA 7th edition manual, every standard paragraph in the body must be indented by
-exactly 0.5 inches (1.27 cm). The text is flush left with a ragged right margin,
-without full justification.
+Sleep deprivation is a prevalent issue in modern academic and professional environments.
+As described in the foundational literature by @baddeley1974, working memory capacity
+is essential for short-term information retention and complex reasoning.
+According to the @apa2020manual, all academic submissions must maintain uniform
+double spacing throughout the entire paper, including headings, quotations, and references.
 
 == Background and Theoretical Context
 
-This is a paragraph under Level 2 (Flush Left, Bold). Notice that there is no extra blank
-space between paragraphs, and the line spacing is exactly double throughout the entire paper.
+This section introduces the theoretical framework. The following direct quotation illustrates
+the formal block quote format required for quotations of 40 words or more:
 
-=== Empirical Evidence
+#quote(block: true)[
+  Direct quotations of 40 words or more are formatted as block quotations. Block quotations
+  do not use quotation marks. The entire block is indented 0.5 inches from the left margin,
+  maintaining the same double line spacing as the rest of the paper. If there are additional
+  paragraphs within the quotation, each subsequent paragraph is indented an additional 0.5 inches.
+]
 
-This is a paragraph under Level 3 (Flush Left, Bold Italic). It continues with standard
-0.5-inch paragraph indentation and double line spacing.
+The study evaluated several distinct cognitive dimensions:#footnote[All experimental procedures complied with institutional review board standards.]
+- Verbal working memory processing speed
+- Visuospatial pattern recognition accuracy
+- Executive task-switching latency
 
-==== Qualitative Findings
-This is a run-in paragraph immediately following a Level 4 heading (Indented, Bold, ending with a period).
-The text continues right on the same line as the heading.
+=== Mathematical Model
 
-===== Case Study A
-This is a run-in paragraph following a Level 5 heading (Indented, Bold Italic, ending with a period).
-The text continues right on the same line as well.
+The primary cognitive retention model is formalized in @eq-retention:
 
-== Results
+#math.equation(
+  alt: "R of t equals R zero times e raised to the power of negative lambda times t",
+  block: true,
+  $ R(t) = R_0 e^(-lambda t) $,
+) <eq-retention>
+
+== Quantitative Results
 
 Below is an accessible APA 7 table and figure illustrating the required layout and semantic metadata.
 
@@ -83,3 +94,5 @@ Below is an accessible APA 7 table and figure illustrating the required layout a
     [Digit Ordering Subtest], [0.84],
   )
 ]
+
+#bibliography("sample.bib")

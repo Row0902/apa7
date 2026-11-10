@@ -6,6 +6,7 @@
 #import "apa7/table.typ": apply-tables, apa-table, render-table-note
 #import "apa7/figure.typ": apply-figures, apa-figure, render-figure-note
 #import "apa7/appendix.typ": apa-appendix, appendix-counter
+#import "apa7/reference.typ": apply-references
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///
@@ -81,6 +82,7 @@
   show: apply-headings
   show: apply-tables.with(lang: lang)
   show: apply-figures.with(lang: lang)
+  show: apply-references.with(lang: lang)
 
   if cover {
     render-cover(
