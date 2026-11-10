@@ -1,0 +1,21 @@
+# cutver.toml - release orchestration configuration
+# For full documentation, see https://github.com/cutver/cutver
+
+[[manifest]]
+path = "typst.toml"
+kind = "toml"
+
+[changelog]
+path = "CHANGELOG.md"
+format = "keep-a-changelog"
+mode = "template"
+template_file = ".github/templates/cutver/RELEASE.md"
+
+[git]
+tag_prefix = "v"
+require_clean_tree = true
+commit_message = "chore(release): v{version} [skip ci]"
+require_branch = "main"
+
+[publish]
+push = true
