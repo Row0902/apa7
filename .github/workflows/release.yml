@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: "Release level"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: "Simulate release (no tags or commits)"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Cutver Release Orchestration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Execute Cutver Release
+        uses: cutver/release@v1
+        id: cutver
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          level: ${{ github.event.inputs.level || 'auto' }}
+          dry-run: ${{ github.event.inputs.dry_run || false }}
+
+      - name: Report Release Summary
+        if: steps.cutver.outputs.released == 'true'
+        run: |
+          echo "======================================================="
+          echo "🚀 Released version: ${{ steps.cutver.outputs.version }}"
+          echo "🏷️ Git tag:         ${{ steps.cutver.outputs.tag }}"
+          echo "======================================================="
