@@ -40,16 +40,13 @@ jobs:
     steps:
       - name: Generate release bot token
         id: release-token
-        if: env.CUTVER_APP_ID != '' && env.CUTVER_APP_PRIVATE_KEY != ''
+        if: ${{ (secrets.CUTVER_CLIENT_ID != '' || secrets.CUTVER_APP_ID != '') && secrets.CUTVER_APP_PRIVATE_KEY != '' }}
         continue-on-error: true
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ secrets.CUTVER_APP_ID }}
+          client-id: ${{ secrets.CUTVER_CLIENT_ID || secrets.CUTVER_APP_ID }}
           private-key: ${{ secrets.CUTVER_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-        env:
-          CUTVER_APP_ID: ${{ secrets.CUTVER_APP_ID }}
-          CUTVER_APP_PRIVATE_KEY: ${{ secrets.CUTVER_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -60,7 +57,7 @@ jobs:
       - name: Setup Git bot credentials
         run: |
           git config --global user.name "cutver-release[bot]"
-          git config --global user.email "${{ secrets.CUTVER_APP_ID || 'github-actions' }}+cutver-release[bot]@users.noreply.github.com"
+          git config --global user.email "${{ steps.release-token.outputs.app-slug || 'cutver-release' }}[bot]@users.noreply.github.com"
 
       - name: Execute Cutver Release
         uses: cutver/release@v1
