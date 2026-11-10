@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-validate:
+    name: Validate Compilation & PDF/UA-1 Accessibility
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+        with:
+          typst-version: "0.15.1"
+
+      - name: Verify Typst compiler version
+        run: typst --version
+
+      - name: Compile Minimal / Professional Paper (PDF/UA-1)
+        run: typst compile --root . --pdf-standard ua-1 examples/minimal.typ output-minimal.pdf
+
+      - name: Compile Student Paper (PDF/UA-1)
+        run: typst compile --root . --pdf-standard ua-1 examples/student.typ output-student.pdf
+
+      - name: Compile Spanish Paper with STEM Blocks (PDF/UA-1)
+        run: typst compile --root . --pdf-standard ua-1 examples/spanish_example.typ output-spanish.pdf
