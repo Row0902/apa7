@@ -1,4 +1,4 @@
-#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix
+#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix, apa-stat, apa-mean, apa-t, apa-ci
 
 #show: apa7.with(
   title: "Efectos de la Privación de Sueño en el Rendimiento Cognitivo",
@@ -38,6 +38,11 @@ La cita en bloque se utiliza para citas textuales de 40 palabras o más:
 ]
 
 == Resultados Empíricos
+
+Una prueba _t_ de muestras independientes indicó que la capacidad de retención disminuyó
+significativamente tras la privación (#apa-mean(64.8, sd: 7.1)) en comparación con la línea base
+(#apa-mean(71.2, sd: 6.4)), #apa-t(48, -2.45, p: 0.018, d: -0.71), con un intervalo de confianza
+de #apa-ci(-10.20, -1.20).
 
 A continuación se presenta la tabla y figura correspondientes:
 

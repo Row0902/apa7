@@ -1,4 +1,15 @@
-#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix, cite-narrative, cite-parenthetical
+#import "../src/lib.typ": (
+  apa7,
+  apa-table,
+  apa-figure,
+  apa-appendix,
+  cite-narrative,
+  cite-parenthetical,
+  apa-stat,
+  apa-t,
+  apa-mean,
+  apa-ci,
+)
 
 #show: apa7.with(
   title: "A Comprehensive Demonstration of APA 7th Edition in Typst",
@@ -63,6 +74,9 @@ The primary cognitive retention model is formalized in @eq-retention:
 == Quantitative Results
 
 Below is an accessible APA 7 table and figure illustrating the required layout and semantic metadata.
+An independent-samples _t_-test revealed that working memory performance was significantly higher
+in the experimental group (#apa-mean(74.1, sd: 7.9)) than in the control group (#apa-mean(68.4, sd: 8.2)),
+#apa-stat(t: 2.45, df: 48, p: .018, d: .71), #apa-ci(1.20, 10.20).
 
 #apa-table(
   title: [Descriptive Statistics for Baseline and Post-Intervention Measures],

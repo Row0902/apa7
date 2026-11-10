@@ -7,6 +7,7 @@
 #import "apa7/figure.typ": apply-figures, apa-figure, render-figure-note
 #import "apa7/appendix.typ": apa-appendix, appendix-counter
 #import "apa7/reference.typ": apply-references, cite-narrative, cite-parenthetical
+#import "apa7/stat.typ": apa-stat, apa-t, apa-f, apa-r, apa-chi2, apa-z, apa-mean, apa-ci, format-p, format-num
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///
