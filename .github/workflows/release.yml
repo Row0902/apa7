@@ -63,6 +63,9 @@ jobs:
           git config --global user.name "cutver-release[bot]"
           git config --global user.email "${{ steps.release-token.outputs.app-slug || 'cutver-release' }}[bot]@users.noreply.github.com"
 
+      - name: Install Cutver CLI
+        uses: cutver/setup@v1
+
       - name: Execute Cutver Release
         uses: cutver/release@v1
         id: cutver
