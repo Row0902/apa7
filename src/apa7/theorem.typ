@@ -22,6 +22,36 @@
 /// Example: `#deq("E equals m c squared", $E = m c^2$)`
 #let deq(alt, body) = math.equation(alt: alt, block: true, body)
 
+/// ── Standard Mathematical Operators in Spanish (Paridad Notacional) ──
+/// Trigonometric functions
+#let sen = math.op("sen")
+#let tg = math.op("tg")
+#let ctg = math.op("ctg")
+#let cotg = math.op("cotg")
+#let cosec = math.op("cosec")
+#let arcsen = math.op("arcsen")
+#let arctg = math.op("arctg")
+#let arcctg = math.op("arcctg")
+#let arccotg = math.op("arccotg")
+
+/// Hyperbolic functions
+#let senh = math.op("senh")
+#let tgh = math.op("tgh")
+#let ctgh = math.op("ctgh")
+#let cotgh = math.op("cotgh")
+#let cosech = math.op("cosech")
+
+/// Arithmetic & Number Theory
+#let mcd = math.op("mcd")
+#let mcm = math.op("mcm")
+#let MCD = math.op("MCD")
+#let MCM = math.op("MCM")
+
+/// Linear Algebra & Vector Calculus
+#let rot = math.op("rot")
+#let traza = math.op("traza")
+#let rango = math.op("rango")
+
 /// Formats a formal Theorem environment.
 ///
 /// Parameters:

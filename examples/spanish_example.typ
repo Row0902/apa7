@@ -12,6 +12,9 @@
   apa-proof,
   eq,
   deq,
+  sen,
+  tg,
+  mcd,
 )
 
 #show: apa7.with(
@@ -53,6 +56,8 @@ depende de ciclos de consolidación neural estables.
 
 #apa-proof(lang: "es")[
   La derivación se deduce aplicando las propiedades de monotonía sobre el modelo lineal.
+  En análisis armónico asociado, el límite fundamental emplea la notación en español:
+  #deq("Limite del seno de x sobre x cuando x tiende a cero es uno", $ lim_(x -> 0) (sen(x)) / x = 1 $)
 ]
 
 La cita en bloque se utiliza para citas textuales de 40 palabras o más:
