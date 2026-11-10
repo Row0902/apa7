@@ -25,7 +25,9 @@
   lang: "en",
   body,
 ) = {
-  pagebreak()
+  // APA 7 Section 2.14: Each appendix must begin on a new, separate page.
+  // Using weak: true prevents accidental empty blank pages if already at top of page.
+  pagebreak(weak: true)
   appendix-counter.step()
 
   context {
