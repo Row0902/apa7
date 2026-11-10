@@ -14,9 +14,9 @@ on:
           - minor
           - major
       first_release:
-        description: "Simulate first release (keep current version)"
+        description: "Simulate first release (keep current version 0.1.0)"
         required: false
-        default: false
+        default: true
         type: boolean
   pull_request:
     branches: [main]
