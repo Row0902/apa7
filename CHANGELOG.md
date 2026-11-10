@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
 ## [v0.1.0] - 2026-11-10
 ### 🐛 Bug Fixes
 - **ci**: calibrate cutver/release inputs using command bump for dry-run simulation ([ee4f503](https://github.com/Row0902/apa7/commit/ee4f503aec4552fb9be8972dec797f9f295fde3e)) by @Row0902
@@ -40,4 +42,3 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 
 
 --- • *CI Build #6*
-## [Unreleased]
