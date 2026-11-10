@@ -19,8 +19,30 @@
   }
 }
 
+/// Helper to join author names according to APA 7 rules for English and Spanish.
+/// - In English: Uses serial (Oxford) comma before 'and' for 3+ authors: "A, B, and C".
+/// - In Spanish: RAE / APA Spanish strictly forbids the Oxford comma: "A, B y C".
+#let join-author-names(names, lang: "en") = {
+  let count = names.len()
+  if count == 0 {
+    none
+  } else if count == 1 {
+    names.at(0)
+  } else if count == 2 {
+    let conj = if lang == "es" { [ y ] } else { [ and ] }
+    [#names.at(0)#conj#names.at(1)]
+  } else {
+    let all-but-last = names.slice(0, count - 1).join(", ")
+    if lang == "es" {
+      [#all-but-last y #names.last()]
+    } else {
+      [#all-but-last, and #names.last()]
+    }
+  }
+}
+
 /// Renders the author byline and affiliations according to APA 7 rules.
-#let render-authors(authors) = {
+#let render-authors(authors, lang: "en") = {
   if type(authors) == str or type(authors) == content {
     return authors
   }
@@ -32,14 +54,7 @@
   let has-dict = authors.any(a => type(a) == dictionary)
   if not has-dict {
     // Array of string names
-    if authors.len() == 1 {
-      authors.at(0)
-    } else if authors.len() == 2 {
-      [#authors.at(0) and #authors.at(1)]
-    } else {
-      let all-but-last = authors.slice(0, authors.len() - 1).join(", ")
-      [#all-but-last, and #authors.last()]
-    }
+    join-author-names(authors, lang: lang)
   } else {
     // Array of dictionaries: (name: "...", affiliation: "...")
     let entries = ()
@@ -59,14 +74,7 @@
 
     if all-same-affil and first-affil != none {
       let names = entries.map(e => e.name)
-      let byline = if names.len() == 1 {
-        names.at(0)
-      } else if names.len() == 2 {
-        [#names.at(0) and #names.at(1)]
-      } else {
-        let prefix = names.slice(0, names.len() - 1).join(", ")
-        [#prefix, and #names.last()]
-      }
+      let byline = join-author-names(names, lang: lang)
       [#byline \ #first-affil]
     } else {
       // Different affiliations: each author followed by their affiliation
@@ -116,7 +124,7 @@
     #title[#paper-title]
     #v(1em)
 
-    #let author-block = render-authors(authors)
+    #let author-block = render-authors(authors, lang: lang)
     #if author-block != none [
       #author-block
     ]
