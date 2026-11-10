@@ -1,4 +1,4 @@
-#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix
+#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix, cite-narrative, cite-parenthetical
 
 #show: apa7.with(
   title: "A Comprehensive Demonstration of APA 7th Edition in Typst",
@@ -27,10 +27,11 @@
 = Introduction
 
 Sleep deprivation is a prevalent issue in modern academic and professional environments.
-As described in the foundational literature by @baddeley1974, working memory capacity
+As demonstrated by #cite-narrative(<baddeley1974>, page: 48), working memory capacity
 is essential for short-term information retention and complex reasoning.
 According to the @apa2020manual, all academic submissions must maintain uniform
 double spacing throughout the entire paper, including headings, quotations, and references.
+Recent empirical investigations corroborate these findings #cite-parenthetical(<baddeley1974>, pages: "52-54").
 
 == Background and Theoretical Context
 
