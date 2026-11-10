@@ -3,6 +3,8 @@
 #import "apa7/heading.typ": apply-headings
 #import "apa7/cover.typ": render-cover, format-apa-date, render-authors
 #import "apa7/abstract.typ": render-abstract, render-keywords
+#import "apa7/table.typ": apply-tables, apa-table, render-table-note
+#import "apa7/figure.typ": apply-figures, apa-figure, render-figure-note
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///
@@ -76,6 +78,8 @@
   )
 
   show: apply-headings
+  show: apply-tables.with(lang: lang)
+  show: apply-figures.with(lang: lang)
 
   if cover {
     render-cover(

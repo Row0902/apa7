@@ -1,4 +1,4 @@
-#import "../src/lib.typ": apa7
+#import "../src/lib.typ": apa7, apa-table, apa-figure
 
 #show: apa7.with(
   title: "A Minimal APA 7 Document",
@@ -47,3 +47,25 @@ The text continues right on the same line as the heading.
 ===== Case Study A
 This is a run-in paragraph following a Level 5 heading (Indented, Bold Italic, ending with a period).
 The text continues right on the same line as well.
+
+== Results
+
+Below is an accessible APA 7 table and figure illustrating the required layout and semantic metadata.
+
+#apa-table(
+  title: [Descriptive Statistics for Baseline and Post-Intervention Measures],
+  columns: (2fr, 1fr, 1fr),
+  header: ([*Measure*], [*Pre-Test (_M_)*], [*Post-Test (_M_)*]),
+  note: [All values are scored on a standardized 0–100 scale. Standard deviations in parentheses.],
+  [Working Memory Capacity], [68.4 (8.2)], [74.1 (7.9)],
+  [Attention Span Index], [52.3 (6.5)], [61.0 (5.8)],
+)
+
+#apa-figure(
+  rect(width: 100%, height: 60pt, fill: luma(245), stroke: 0.5pt + luma(180))[
+    #align(center + horizon)[#text(size: 11pt, style: "italic")[Hypothesized Path Diagram]]
+  ],
+  title: [Path Analysis Model of Cognitive Performance Under Sleep Deprivation],
+  alt: "Path model showing direct and indirect effects of sleep duration on cognitive retention",
+  note: [Single-headed arrows represent direct directional paths. Significance levels: _p_ < .05.],
+)
