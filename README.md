@@ -8,6 +8,7 @@
 [![Package Version](https://img.shields.io/badge/version-0.1.0-orange?style=flat-square)](typst.toml)
 [![Accessibility](https://img.shields.io/badge/accessibility-PDF%2FUA--1-green?style=flat-square)](docs/accessibility.md)
 [![CI](https://github.com/Row0902/apa7/actions/workflows/ci.yml/badge.svg)](https://github.com/Row0902/apa7/actions/workflows/ci.yml)
+[![released with: cutver](https://img.shields.io/badge/released%20with-cutver-0969da?style=flat-square&logo=git&logoColor=white)](https://github.com/cutver/cutver)
 [![License](https://img.shields.io/badge/license-MIT-purple?style=flat-square)](LICENSE)
 
 <br />
