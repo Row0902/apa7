@@ -78,7 +78,7 @@ jobs:
           dry-run: ${{ github.event.inputs.dry_run || false }}
 
       - name: Publish GitHub Release
-        if: steps.cutver.outputs.released == 'true' && !github.event.inputs.dry_run
+        if: steps.cutver.outputs.released == 'true' && github.event.inputs.dry_run != true && github.event.inputs.dry_run != 'true'
         env:
           GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
         run: |
