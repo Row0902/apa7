@@ -77,6 +77,15 @@ jobs:
           first-release: ${{ github.event.inputs.first_release }}
           dry-run: ${{ github.event.inputs.dry_run || false }}
 
+      - name: Publish GitHub Release
+        if: steps.cutver.outputs.released == 'true' && !github.event.inputs.dry_run
+        env:
+          GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.cutver.outputs.tag }}" \
+            --title "${{ steps.cutver.outputs.tag }}" \
+            --notes-file "${{ steps.cutver.outputs.notes-path }}"
+
       - name: Report Release Summary
         if: steps.cutver.outputs.released == 'true'
         run: |
