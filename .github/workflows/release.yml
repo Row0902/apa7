@@ -40,13 +40,17 @@ jobs:
     steps:
       - name: Generate release bot token
         id: release-token
-        if: ${{ (secrets.CUTVER_CLIENT_ID != '' || secrets.CUTVER_APP_ID != '') && secrets.CUTVER_APP_PRIVATE_KEY != '' }}
+        if: (env.CLIENT_ID != '' || env.APP_ID != '') && env.PRIVATE_KEY != ''
         continue-on-error: true
         uses: actions/create-github-app-token@v3
         with:
           client-id: ${{ secrets.CUTVER_CLIENT_ID || secrets.CUTVER_APP_ID }}
           private-key: ${{ secrets.CUTVER_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
+        env:
+          CLIENT_ID: ${{ secrets.CUTVER_CLIENT_ID }}
+          APP_ID: ${{ secrets.CUTVER_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.CUTVER_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
