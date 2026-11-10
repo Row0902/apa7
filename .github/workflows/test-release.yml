@@ -1,0 +1,54 @@
+name: Test Release (Dry Run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: "Release level to simulate"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  test-release:
+    name: Simulate Cutver Release Preflight
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Cutver CLI
+        uses: cutver/setup@v1
+
+      - name: Validate Manifest Health & Changelog
+        run: cutver doctor --check-changelog
+
+      - name: Execute Cutver Release (Dry-Run Mode)
+        uses: cutver/release@v1
+        id: cutver
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          level: ${{ github.event.inputs.level || 'auto' }}
+          dry-run: true
+
+      - name: Report Simulation Output
+        run: |
+          echo "======================================================="
+          echo "✔ Cutver release simulation completed successfully!"
+          echo "ℹ Simulated version: ${{ steps.cutver.outputs.version }}"
+          echo "ℹ Simulated tag:     ${{ steps.cutver.outputs.tag }}"
+          echo "======================================================="

@@ -33,17 +33,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Generate Token for cutver-release[bot] (Optional)
+        id: app-token
+        if: ${{ secrets.RELEASE_APP_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
 
       - name: Execute Cutver Release
         uses: cutver/release@v1
         id: cutver
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           level: ${{ github.event.inputs.level || 'auto' }}
           dry-run: ${{ github.event.inputs.dry_run || false }}
 
