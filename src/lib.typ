@@ -5,6 +5,7 @@
 #import "apa7/abstract.typ": render-abstract, render-keywords
 #import "apa7/table.typ": apply-tables, apa-table, render-table-note
 #import "apa7/figure.typ": apply-figures, apa-figure, render-figure-note
+#import "apa7/appendix.typ": apa-appendix, appendix-counter
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///

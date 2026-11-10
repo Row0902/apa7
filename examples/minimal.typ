@@ -1,4 +1,4 @@
-#import "../src/lib.typ": apa7, apa-table, apa-figure
+#import "../src/lib.typ": apa7, apa-table, apa-figure, apa-appendix
 
 #show: apa7.with(
   title: "A Minimal APA 7 Document",
@@ -69,3 +69,17 @@ Below is an accessible APA 7 table and figure illustrating the required layout a
   alt: "Path model showing direct and indirect effects of sleep duration on cognitive retention",
   note: [Single-headed arrows represent direct directional paths. Significance levels: _p_ < .05.],
 )
+
+#apa-appendix(title: [Standardized Battery Task Items])[
+  This appendix lists the complete set of memory evaluation items administered
+  during testing.
+
+  #apa-table(
+    title: [Subordinate Battery Scores and Item Reliability],
+    columns: (2fr, 1fr),
+    header: ([*Item Domain*], [*Cronbach's _α_*]),
+    note: [Values reflect reliability estimates across all participants.],
+    [Spatial Span Subtest], [0.89],
+    [Digit Ordering Subtest], [0.84],
+  )
+]
