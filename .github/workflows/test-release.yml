@@ -3,8 +3,8 @@ name: Test Release (Dry Run)
 on:
   workflow_dispatch:
     inputs:
-      level:
-        description: "Release level to simulate"
+      bump:
+        description: "Bump level to simulate"
         required: true
         default: "auto"
         type: choice
@@ -13,6 +13,11 @@ on:
           - patch
           - minor
           - major
+      first_release:
+        description: "Simulate first release (keep current version)"
+        required: false
+        default: false
+        type: boolean
   pull_request:
     branches: [main]
 
@@ -37,12 +42,13 @@ jobs:
       - name: Validate Manifest Health & Changelog
         run: cutver doctor --check-changelog
 
-      - name: Execute Cutver Release (Dry-Run Mode)
+      - name: Execute Cutver Bump Simulation
         uses: cutver/release@v1
         id: cutver
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          level: ${{ github.event.inputs.level || 'auto' }}
+          command: bump
+          bump: ${{ github.event.inputs.bump || 'auto' }}
+          first-release: ${{ github.event.inputs.first_release || false }}
           dry-run: true
 
       - name: Report Simulation Output

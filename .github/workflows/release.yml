@@ -3,8 +3,8 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      level:
-        description: "Release level"
+      bump:
+        description: "Release bump level"
         required: true
         default: "auto"
         type: choice
@@ -13,6 +13,11 @@ on:
           - patch
           - minor
           - major
+      first_release:
+        description: "First release (tag current version without bumping)"
+        required: false
+        default: false
+        type: boolean
       dry_run:
         description: "Simulate release (no tags or commits)"
         required: false
@@ -50,9 +55,12 @@ jobs:
       - name: Execute Cutver Release
         uses: cutver/release@v1
         id: cutver
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
-          level: ${{ github.event.inputs.level || 'auto' }}
+          command: release
+          bump: ${{ github.event.inputs.bump || 'auto' }}
+          first-release: ${{ github.event.inputs.first_release || false }}
           dry-run: ${{ github.event.inputs.dry_run || false }}
 
       - name: Report Release Summary
