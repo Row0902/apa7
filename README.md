@@ -248,6 +248,18 @@ typst compile --pdf-standard ua-1 examples/minimal.typ examples/minimal.pdf
 
 ---
 
+## 🚀 Release Orchestration
+
+This project uses [Cutver](https://github.com/cutver/cutver) for automated Semantic Versioning, conventional changelog generation, and sandboxed release orchestration. All releases are preflight-audited with `cutver doctor` and published by [@cutver-release[bot]](https://github.com/apps/cutver-release).
+
+<div align="center">
+
+[![released with: cutver](https://img.shields.io/badge/released%20with-cutver-0969da?style=flat-square&logo=git&logoColor=white)](https://github.com/cutver/cutver)
+
+</div>
+
+---
+
 ## Author
 
 **Rowell Urbaez Reyes**  
