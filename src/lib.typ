@@ -2,6 +2,7 @@
 #import "apa7/typography.typ": apply-typography, default-font-size
 #import "apa7/heading.typ": apply-headings
 #import "apa7/cover.typ": render-cover, format-apa-date, render-authors
+#import "apa7/abstract.typ": render-abstract, render-keywords
 
 /// Main template function for APA 7th Edition documents in Typst.
 ///
@@ -29,6 +30,9 @@
   instructor: none,
   due-date: none,
   author-note: none,
+  abstract: none,
+  keywords: (),
+  repeat-title: true,
   cover: true,
   font: "Times New Roman",
   font-size: auto,
@@ -84,6 +88,22 @@
       author-note: author-note,
       lang: lang,
     )
+  }
+
+  if abstract != none {
+    render-abstract(
+      abstract: abstract,
+      keywords: keywords,
+      lang: lang,
+    )
+  }
+
+  // APA 7 Section 2.11: Repeat paper title centered and bold at the top of the first body page
+  if repeat-title and title != none {
+    align(center)[
+      #strong(title)
+      #v(1em)
+    ]
   }
 
   body

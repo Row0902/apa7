@@ -12,6 +12,14 @@
 
     Correspondence concerning this article should be addressed to Rowell Urbaez Reyes, Email: contact\@example.com.
   ],
+  abstract: [
+    This paper presents a standardized, accessible implementation of the American
+    Psychological Association (APA) 7th edition formatting guidelines within the
+    Typst typesetting ecosystem. The template enforces strict layout geometry,
+    dual-mode title pages, hierarchical headings, and universal accessibility
+    compliant with the PDF/UA-1 standard.
+  ],
+  keywords: ("APA style", "Typst", "Academic writing", "Accessibility", "PDF/UA-1"),
   lang: "en",
 )
 
