@@ -19,3 +19,27 @@ require_branch = "main"
 
 [publish]
 push = true
+
+# Release gate: a broken example must never reach a tag. Preflight runs only on a
+# real release (never on --dry-run), before any file or commit is touched.
+[preflight]
+default_timeout = 600
+examples = "tmp=$(mktemp -d) && typst compile --root . --pdf-standard ua-1 examples/minimal.typ \"$tmp/minimal.pdf\" && typst compile --root . --pdf-standard ua-1 examples/student.typ \"$tmp/student.pdf\" && typst compile --root . --pdf-standard ua-1 examples/spanish_example.typ \"$tmp/spanish.pdf\" && rm -rf \"$tmp\""
+
+[plugins.github-publish]
+runtime = "wasm"
+source = "github-publish-0.2.1.wasm"
+hash = "0a38c934200f833a35cae3a53c03c403566f42f4abc58a744a7b2d8a09874a9b"
+capabilities = ["lifecycle.v1"]
+events = ["on_pre_bump", "on_post_release"]
+
+[plugins.github-publish.permissions]
+network = ["api.github.com", "uploads.github.com"]
+env = ["GITHUB_TOKEN", "GITHUB_REPOSITORY"]
+filesystem = ["."]
+
+[plugins.github-publish.config]
+repository = "Row0902/pandect-apa7"
+draft = true
+# The plugin sets the title from this template; the workflow must not repeat it.
+title_template = "pandect-apa7 {version}"
