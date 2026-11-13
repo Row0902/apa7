@@ -28,20 +28,25 @@ jobs:
       - name: Verify Typst compiler version
         run: typst --version
 
-      # Coverage map. Every documented surface lives in exactly one of these
-      # four places; a new feature belongs in examples/features.typ unless it
-      # needs a full manuscript to be meaningful.
-      # - examples/minimal.typ: professional cover, tables, figures, appendices,
-      #   APA headings, a t-test, a confidence interval, an appendix table.
+      # Coverage map. The documented surface is spread across these files; a new
+      # feature belongs in examples/features.typ unless it needs a full manuscript
+      # to be meaningful. Several items appear in more than one example on purpose
+      # (a default appendix, a theorem in both languages), so this map says where a
+      # feature is exercised, not that it is exercised only once.
+      # - examples/minimal.typ: professional cover, tables, figures, appendices
+      #   (default letter), APA headings, a t-test, a confidence interval, an
+      #   appendix table, theorem and proof.
       # - examples/student.typ: student cover, course/instructor/date fields.
-      # - examples/spanish_example.typ: Spanish localization, STEM operators
-      #   (sen, tg, mcd), theorem environments, bibliography in Spanish.
+      # - examples/spanish_example.typ: Spanish localization, the STEM operator
+      #   helpers (`sen` is rendered; `tg` and `mcd` are imported for coverage),
+      #   theorem environments and bibliography in Spanish.
       # - examples/features.typ: the theorem family (lemma, corollary,
       #   proposition, example), apa-proof(title:), every apa-stat branch
       #   (f, r, chi2, z, m, ci with level), format-num, format-p, apa-ci(level:),
       #   paper-size "a4", font/font-size/region overrides, cover: false,
       #   repeat-title: false, apa-appendix(letter:, multi:), cite-*(supplement:).
       # - tests/: rendered strings and input validation of the helpers.
+      # - template/main.typ: compiled separately below against this checkout.
       - name: Compile Feature Coverage Paper (PDF/UA-1)
         run: typst compile --root . --pdf-standard ua-1 examples/features.typ output-features.pdf
 
@@ -56,6 +61,9 @@ jobs:
 
       - name: Run statistics test suite
         run: bash tests/run.sh
+
+      - name: Run template gate regression tests
+        run: bash tests/ci-gates.sh
 
       # The template is published through Typst Universe and imports the released
       # package by version, so it is never exercised by the steps above. Compile
@@ -73,6 +81,15 @@ jobs:
           declared="$(sed -n 's/^version *= *"\(.*\)"/\1/p' typst.toml | head -1)"
           echo "template pins $pinned, package declares $declared"
 
+          # Both must be a real package version. Without this, `0.2` compares
+          # equal to `0.2.0` and a pre-release suffix inverts the ordering below.
+          for version in "$pinned" "$declared"; do
+            if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::'$version' is not a MAJOR.MINOR.PATCH package version."
+              exit 1
+            fi
+          done
+
           # The pin must never be ahead of the package: that version cannot exist
           # yet. It may lag while a Typst Universe submission is pending, because
           # `typst init` can only resolve a version Universe already serves.
@@ -82,8 +99,11 @@ jobs:
             exit 1
           fi
 
+          # Copy the whole template directory, not two named files: the template may
+          # be packaged with anything it imports, and a missing file must not turn
+          # into a gate failure of its own.
           mkdir -p build
-          cp template/main.typ template/sample.bib build/
+          cp -r template/. build/
           sed -i 's|@preview/pandect-apa7:[0-9][0-9.]*|../src/lib.typ|' build/main.typ
           if ! grep -q '"../src/lib.typ"' build/main.typ; then
             echo "::error::the local import substitution changed nothing; the template gate is broken."
@@ -91,3 +111,8 @@ jobs:
           fi
 
           typst compile --root . --pdf-standard ua-1 build/main.typ output-template.pdf
+
+          # Known limit, stated so nobody over-trusts this gate: it proves the
+          # template body against THIS checkout, not against the pinned release.
+          # A template using a helper that exists only on main still passes here,
+          # so bump the pin only after the release is served by Typst Universe.
