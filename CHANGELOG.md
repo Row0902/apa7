@@ -6,11 +6,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 ## [Unreleased]
 
 ### 🐛 Fixes
+- **figure**: `#apa-figure(...)` now requires `alt` text instead of defaulting it to off. A figure built without a description — or with an empty one — stops the build with a message explaining why PDF/UA-1 needs it and how to supply it, so a forgotten description can no longer reach a reader as silence. A graphic that carries no information takes `decorative: true`, which supplies a neutral description; combining it with a real `alt` is rejected as a contradiction.
 - **stat**: `apa-stat(...)` no longer renders nothing when its parameters are incomplete. An incomplete call (`#apa-stat(t: 2.45)` without `df`, `f` without `df1`/`df2`, `chi2` without `df`, a `ci` that is not a `(lower, upper)` pair, or a call with no statistic) now aborts compilation with a message naming the missing parameter and the helper to call instead. Silent wrong values are gone too: `f` no longer fabricates `F(1, 1)` when both degrees of freedom are missing, a `df` array that is not a `(df1, df2)` pair is rejected instead of dropping its extra values, and `ci` no longer drops a third bound.
 - **stat**: `apa-stat(...)` forwards `level` to the confidence-interval branch, so `#apa-stat(ci: (1.20, 10.20), level: 99)` renders `99% CI [1.20, 10.20]`. `level` outside the `ci` branch is rejected instead of being ignored.
 
 ### ✅ Tests
+- **figure**: `tests/figure.typ` pins the resolved `alt` of every path (passed through, decorative in both languages) and `tests/fail/` covers a missing `alt`, an empty `alt` and `decorative: true` with a description.
 - **stat**: add a test suite (`tests/run.sh`) asserting the rendered string of every `apa-stat` branch and the compile-time failure of each incomplete-input case; run it in CI.
+
+### 📚 Documentation
+- **accessibility**: the guide now describes the implemented figure behaviour, with a section on `#apa-figure`, `alt` and `decorative: true`, instead of stating the intention.
 
 ## [v0.2.0] - 2026-11-13
 

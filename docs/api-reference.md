@@ -75,7 +75,7 @@ Constructs an APA 7 table with semantic header tags for PDF/UA-1 accessibility, 
 
 ### `#apa-figure(...)`
 
-Constructs an APA 7 figure with caption positioned above, accessible alt-text description, and flush-left notes.
+Constructs an APA 7 figure with caption positioned above, a required alt-text description, and flush-left notes.
 
 ```typst
 #apa-figure(
@@ -85,6 +85,15 @@ Constructs an APA 7 figure with caption positioned above, accessible alt-text de
   note: [Source notes, abbreviations, and significance levels.],
   lang: "en",
 )
+```
+
+`alt` is required: `#apa-figure(...)` without it, or with an empty string, stops the build and explains what to write. A graphic that carries no information takes `decorative: true` instead, which supplies a neutral description for PDF/UA-1:
+
+```typst
+#apa-figure(rect(width: 100%, height: 4pt, fill: black), decorative: true, title: [Divider])
+```
+
+`decorative: true` together with a real `alt` is a contradiction and stops the build.
 ```
 
 ---

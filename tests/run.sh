@@ -29,11 +29,17 @@ fail() {
   done
 }
 
-# 1. Rendered strings.
+# 1. Rendered strings and resolved values.
 if output="$(typst compile --root . tests/stat.typ "$workdir/stat.pdf" 2>&1)"; then
   pass "render: tests/stat.typ"
 else
   fail "render: tests/stat.typ" "$output"
+fi
+
+if output="$(typst compile --root . tests/figure.typ "$workdir/figure.pdf" 2>&1)"; then
+  pass "render: tests/figure.typ"
+else
+  fail "render: tests/figure.typ" "$output"
 fi
 
 # 2. Compile-time failures. Each fixture must fail and mention every needle.
@@ -69,6 +75,9 @@ expect_compile_error ci-not-a-pair.typ '`ci`' 'lower, upper' 'apa-ci'
 expect_compile_error ci-three-bounds.typ 'lower, upper' 'apa-ci'
 expect_compile_error level-without-ci.typ '`level`' '`ci`'
 expect_compile_error no-statistic.typ '`ci`' 'apa-mean'
+expect_compile_error figure-without-alt.typ '`alt`' 'decorative: true' 'PDF/UA-1'
+expect_compile_error figure-empty-alt.typ '`alt`' 'decorative: true'
+expect_compile_error figure-decorative-with-alt.typ '`decorative: true`' 'mutually exclusive'
 
 printf '\n%d passed, %d failed\n' "$passed" "$failed"
 exit "$status"
