@@ -3,7 +3,9 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## v0.2.0 — 2026-11-13
+## [Unreleased]
+
+## [v0.2.0] - 2026-11-13
 
 ### ✨ Features
 - **release**: cut releases with the github-publish plugin in [#3](https://github.com/Row0902/pandect-apa7/pull/3) ([e630254](https://github.com/Row0902/pandect-apa7/commit/e63025457eb137b483e6ba92b0fd6159f3127fcd)) by @Row0902
@@ -28,8 +30,6 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 @Row0902
 
 [Compare v0.1.0...v0.2.0](https://github.com/Row0902/pandect-apa7/compare/v0.1.0...v0.2.0)
-## [Unreleased]
-
 ## [v0.1.0] - 2026-11-10
 ### 🐛 Bug Fixes
 - **ci**: calibrate cutver/release inputs using command bump for dry-run simulation ([ee4f503](https://github.com/Row0902/pandect-apa7/commit/ee4f503aec4552fb9be8972dec797f9f295fde3e)) by @Row0902

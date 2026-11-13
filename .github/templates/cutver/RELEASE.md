@@ -1,4 +1,4 @@
-## {{ tag }} — {{ date }}
+## [{{ tag }}] - {{ date }}
 {%- if breaking %}
 
 > [!WARNING]
