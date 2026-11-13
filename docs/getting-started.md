@@ -4,7 +4,15 @@
 
 ## Quick Setup
 
-To use `pandect-apa7` in your document:
+The package is published on [Typst Universe](https://typst.app/universe/package/pandect-apa7). Create a new project from the bundled template:
+
+```bash
+typst init @preview/pandect-apa7:0.1.0 my-paper
+cd my-paper
+typst compile main.typ
+```
+
+To use `pandect-apa7` in an existing document:
 
 ```typst
 #import "@preview/pandect-apa7:0.1.0": *

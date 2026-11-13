@@ -6,6 +6,7 @@
 
 [![Typst Compiler](https://img.shields.io/badge/typst-0.15.0-blue?style=flat-square&logo=typst)](https://typst.app/)
 [![Package Version](https://img.shields.io/badge/version-0.1.0-orange?style=flat-square)](typst.toml)
+[![Typst Universe](https://img.shields.io/badge/Typst%20Universe-published-239dad?style=flat-square&logo=typst)](https://typst.app/universe/package/pandect-apa7)
 [![Accessibility: PDF/UA-1](https://img.shields.io/badge/accessibility-PDF%2FUA--1-green?style=flat-square)](https://github.com/Row0902/pandect-apa7/blob/v0.1.0/docs/accessibility.md)
 [![CI: Build Status](https://github.com/Row0902/pandect-apa7/actions/workflows/ci.yml/badge.svg)](https://github.com/Row0902/pandect-apa7/actions/workflows/ci.yml)
 [![released with: cutver](https://img.shields.io/badge/released%20with-cutver-0969da?style=flat-square&logo=git&logoColor=white)](https://github.com/cutver/cutver)
@@ -73,7 +74,21 @@ We designed dedicated, low-cognitive-load guides organized with tables and pract
 
 ## ⚡ Quickstart
 
-Get started immediately using one of our complete, production-ready templates:
+`pandect-apa7` is published on [Typst Universe](https://typst.app/universe/package/pandect-apa7): the compiler downloads it on first use, so there is nothing to install manually.
+
+```bash
+typst init @preview/pandect-apa7:0.1.0 my-paper
+cd my-paper
+typst compile main.typ
+```
+
+Already have a document? Import the package directly:
+
+```typst
+#import "@preview/pandect-apa7:0.1.0": *
+```
+
+Or start from one of our complete, production-ready templates:
 
 <details open>
 <summary><b>🎓 Student Paper Template (Click to expand / collapse)</b></summary>
