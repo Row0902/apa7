@@ -41,7 +41,6 @@ jobs:
       - name: Generate release bot token
         id: release-token
         if: (env.CLIENT_ID != '' || env.APP_ID != '') && env.PRIVATE_KEY != ''
-        continue-on-error: true
         uses: actions/create-github-app-token@v3
         with:
           client-id: ${{ secrets.CUTVER_CLIENT_ID || secrets.CUTVER_APP_ID }}
@@ -52,11 +51,20 @@ jobs:
           APP_ID: ${{ secrets.CUTVER_APP_ID }}
           PRIVATE_KEY: ${{ secrets.CUTVER_APP_PRIVATE_KEY }}
 
+      # A silent fallback to the default token would cut a release that is not
+      # attributed to the bot, and would hide a missing or broken app secret.
+      - name: Require the release bot token
+        run: |
+          if [ -z "${{ steps.release-token.outputs.token }}" ]; then
+            echo "::error::The cutver-release app token is missing. Set CUTVER_APP_ID (or CUTVER_CLIENT_ID) and CUTVER_APP_PRIVATE_KEY; this workflow never falls back to the default token."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          token: ${{ steps.release-token.outputs.token }}
 
       - name: Setup Git bot credentials
         run: |
@@ -83,8 +91,8 @@ jobs:
         uses: cutver/release@v1
         id: cutver
         env:
-          GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release-token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.release-token.outputs.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           command: release
@@ -98,7 +106,7 @@ jobs:
       - name: Publish the draft release
         if: steps.cutver.outputs.released == 'true' && github.event.inputs.dry_run != true && github.event.inputs.dry_run != 'true'
         env:
-          GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release-token.outputs.token }}
           TAG: ${{ steps.cutver.outputs.tag }}
         run: |
           set -euo pipefail
@@ -124,7 +132,9 @@ jobs:
               ;;
           esac
 
-          gh release edit "$TAG" --draft=false --title "Release $TAG"
+          # The plugin owns the title and the body: it created the draft from the
+          # rendered entry and the title_template. Only the draft flag changes here.
+          gh release edit "$TAG" --draft=false
 
           if ! state=$(gh release view "$TAG" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>&1); then
             error "Could not re-read release $TAG after promotion: $state"

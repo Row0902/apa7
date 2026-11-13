@@ -41,3 +41,5 @@ filesystem = ["."]
 [plugins.github-publish.config]
 repository = "Row0902/pandect-apa7"
 draft = true
+# The plugin sets the title from this template; the workflow must not repeat it.
+title_template = "pandect-apa7 {version}"
