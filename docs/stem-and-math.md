@@ -1,6 +1,6 @@
 # STEM, Mathematics, and Statistics Guide
 
-A practical guide for drafting calculus, linear algebra, and statistical analyses using `apa7`.
+A practical guide for drafting calculus, linear algebra, and statistical analyses using `pandect-apa7`.
 
 ---
 
@@ -114,7 +114,7 @@ APA 7 specifies strict rules for reporting statistical findings (Sections 6.40â€
 
 ## 5. Spanish Mathematical Operators
 
-`apa7` natively exports canonical Spanish mathematical operators so they render in upright Roman type with proper spacing instead of italic multiplied variables:
+`pandect-apa7` natively exports canonical Spanish mathematical operators so they render in upright Roman type with proper spacing instead of italic multiplied variables:
 
 ```typst
 $ sen^2(x) + cos^2(x) = 1 $

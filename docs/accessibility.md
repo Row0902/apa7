@@ -1,12 +1,12 @@
 # Accessibility Guide (PDF/UA-1 & Screen Readers)
 
-`apa7` is designed from the ground up for **Universal Access** and conforms to the international standard **PDF/UA-1** (ISO 14289-1), Section 508, the ADA, and the European Accessibility Act (EAA).
+`pandect-apa7` is designed from the ground up for **Universal Access** and conforms to the international standard **PDF/UA-1** (ISO 14289-1), Section 508, the ADA, and the European Accessibility Act (EAA).
 
 ---
 
-## 1. What Makes `apa7` Accessible by Design?
+## 1. What Makes `pandect-apa7` Accessible by Design?
 
-| Feature | Standard Document (LaTeX/Word) | `apa7` in Typst |
+| Feature | Standard Document (LaTeX/Word) | `pandect-apa7` in Typst |
 | :--- | :--- | :--- |
 | **Document Metadata** | Often missing or blank | Injects title, author list, and date directly into XMP metadata catalog |
 | **Language Tagging** | Default unlocalized | Declares ISO 639-1 language (`lang`) to ensure screen readers use correct pronunciation |
@@ -20,7 +20,7 @@
 
 ## 2. Navigating with a Screen Reader (NVDA / JAWS)
 
-When reading a PDF compiled with `apa7`:
+When reading a PDF compiled with `pandect-apa7`:
 
 ### Quick Keys in Browse Mode
 

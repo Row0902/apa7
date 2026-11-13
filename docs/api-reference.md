@@ -1,6 +1,6 @@
 # API Reference
 
-Complete reference of all functions, helpers, and operators exported by `apa7`.
+Complete reference of all functions, helpers, and operators exported by `pandect-apa7`.
 
 ---
 

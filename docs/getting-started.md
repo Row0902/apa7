@@ -1,13 +1,13 @@
-# Getting Started with apa7
+# Getting Started with pandect-apa7
 
-`apa7` is a standards-compliant, universally accessible template and framework for academic papers in Typst (APA 7th Edition).
+`pandect-apa7` is a standards-compliant, universally accessible template and framework for academic papers in Typst (APA 7th Edition).
 
 ## Quick Setup
 
-To use `apa7` in your document:
+To use `pandect-apa7` in your document:
 
 ```typst
-#import "@preview/apa7:0.1.0": *
+#import "@preview/pandect-apa7:0.1.0": *
 
 #show: apa7.with(
   title: "Your Document Title",
@@ -39,7 +39,7 @@ APA 7 distinguishes between two types of papers:
 ## 2. Student Paper Template (Ready to Copy)
 
 ```typst
-#import "@preview/apa7:0.1.0": *
+#import "@preview/pandect-apa7:0.1.0": *
 
 #show: apa7.with(
   paper-type: "student",
@@ -67,7 +67,7 @@ Sleep disturbances are pervasive in academic settings...
 ## 3. Professional Paper Template (Ready to Copy)
 
 ```typst
-#import "@preview/apa7:0.1.0": *
+#import "@preview/pandect-apa7:0.1.0": *
 
 #show: apa7.with(
   paper-type: "professional",
