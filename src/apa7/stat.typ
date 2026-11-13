@@ -160,11 +160,16 @@
 
 /// Unified dispatcher helper for statistical reporting.
 ///
+/// The dispatcher refuses incomplete input instead of rendering nothing: a
+/// missing degree of freedom or an empty call aborts compilation with a message
+/// that names the missing parameter and the helper to call instead.
+///
 /// Examples:
 /// - `apa-stat(t: 2.45, df: 48, p: .018, d: .71)`
 /// - `apa-stat(f: 4.23, df1: 2, df2: 45, p: .020, eta2: .16)`
 /// - `apa-stat(r: .42, p: .003, df: 98)`
 /// - `apa-stat(m: 24.5, sd: 3.2)`
+/// - `apa-stat(ci: (1.20, 10.20), level: 99)`
 #let apa-stat(
   t: none,
   f: none,
@@ -181,24 +186,69 @@
   sd: none,
   n: none,
   ci: none,
+  level: none,
 ) = {
-  if t != none and df != none {
+  let fail(message) = panic("apa-stat: " + message)
+
+  // `level` only shapes the confidence-interval branch. Never ignore it in
+  // silence: a caller who writes `level: 99` expects a 99% interval.
+  let other-statistic = t != none or f != none or r != none or chi2 != none or z != none or m != none
+  if level != none and (other-statistic or ci == none) {
+    fail(
+      "`level` only applies to a confidence interval, rendered by the `ci` branch. Call `apa-stat(ci: (1.20, 10.20), level: 99)`, or drop `level`.",
+    )
+  }
+
+  if t != none {
+    if df == none {
+      fail(
+        "`t` needs `df`, the degrees of freedom shown as t(df). Call `apa-stat(t: 2.45, df: 48)` or `apa-t(48, 2.45)`.",
+      )
+    }
     apa-t(df, t, p: p, d: d)
   } else if f != none {
-    let d1 = if df1 != none { df1 } else if type(df) == array { df.at(0) } else { 1 }
-    let d2 = if df2 != none { df2 } else if type(df) == array { df.at(1) } else { 1 }
+    let df-pair = type(df) == array and df.len() == 2
+    if type(df) == array and not df-pair {
+      fail(
+        "`f` needs exactly two degrees of freedom, `df: (df1, df2)`, but got an array of " + str(df.len()) + ". Call `apa-stat(f: 4.23, df1: 2, df2: 45)`, `apa-stat(f: 4.23, df: (2, 45))`, or `apa-f(2, 45, 4.23)`.",
+      )
+    }
+    let d1 = if df1 != none { df1 } else if df-pair { df.at(0) } else { none }
+    let d2 = if df2 != none { df2 } else if df-pair { df.at(1) } else { none }
+    if d1 == none {
+      fail(
+        "`f` needs `df1`, the between-groups degrees of freedom shown as F(df1, df2). Call `apa-stat(f: 4.23, df1: 2, df2: 45)`, `apa-stat(f: 4.23, df: (2, 45))`, or `apa-f(2, 45, 4.23)`.",
+      )
+    }
+    if d2 == none {
+      fail(
+        "`f` needs `df2`, the error degrees of freedom shown as F(df1, df2). Call `apa-stat(f: 4.23, df1: 2, df2: 45)`, `apa-stat(f: 4.23, df: (2, 45))`, or `apa-f(2, 45, 4.23)`.",
+      )
+    }
     apa-f(d1, d2, f, p: p, eta2: eta2)
   } else if r != none {
     apa-r(r, p: p, df: df)
-  } else if chi2 != none and df != none {
+  } else if chi2 != none {
+    if df == none {
+      fail(
+        "`chi2` needs `df`, the degrees of freedom shown as chi^2(df). Call `apa-stat(chi2: 8.42, df: 2)` or `apa-chi2(2, 8.42)`.",
+      )
+    }
     apa-chi2(df, chi2, p: p, n: n)
   } else if z != none {
     apa-z(z, p: p)
   } else if m != none {
     apa-mean(m, sd: sd, n: n)
-  } else if ci != none and type(ci) == array {
-    apa-ci(ci.at(0), ci.at(1))
+  } else if ci != none {
+    if type(ci) != array or ci.len() != 2 {
+      fail(
+        "`ci` needs the two interval bounds as `(lower, upper)`. Call `apa-stat(ci: (1.20, 10.20))` or `apa-ci(1.20, 10.20)`.",
+      )
+    }
+    apa-ci(ci.at(0), ci.at(1), level: if level != none { level } else { 95 })
   } else {
-    none
+    fail(
+      "nothing to report: pass one of `t`, `f`, `r`, `chi2`, `z`, `m`, or `ci`. For full control call `apa-t`, `apa-f`, `apa-r`, `apa-chi2`, `apa-z`, `apa-mean`, or `apa-ci` directly.",
+    )
   }
 }

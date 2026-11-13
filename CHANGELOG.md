@@ -5,6 +5,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### 🐛 Fixes
+- **stat**: `apa-stat(...)` no longer renders nothing when its parameters are incomplete. An incomplete call (`#apa-stat(t: 2.45)` without `df`, `f` without `df1`/`df2`, `chi2` without `df`, a `ci` that is not a `(lower, upper)` pair, or a call with no statistic) now aborts compilation with a message naming the missing parameter and the helper to call instead. Silent wrong values are gone too: `f` no longer fabricates `F(1, 1)` when both degrees of freedom are missing, a `df` array that is not a `(df1, df2)` pair is rejected instead of dropping its extra values, and `ci` no longer drops a third bound.
+- **stat**: `apa-stat(...)` forwards `level` to the confidence-interval branch, so `#apa-stat(ci: (1.20, 10.20), level: 99)` renders `99% CI [1.20, 10.20]`. `level` outside the `ci` branch is rejected instead of being ignored.
+
+### ✅ Tests
+- **stat**: add a test suite (`tests/run.sh`) asserting the rendered string of every `apa-stat` branch and the compile-time failure of each incomplete-input case; run it in CI.
+
 ## [v0.2.0] - 2026-11-13
 
 ### ✨ Features

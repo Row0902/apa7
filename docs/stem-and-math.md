@@ -107,8 +107,11 @@ APA 7 specifies strict rules for reporting statistical findings (Sections 6.40�
 | **Chi-Square** | `#apa-stat(chi2: 8.42, df: 2, n: 100, p: .015)` | $\chi^2(2, N = 100) = 8.42, p = .015$ |
 | **Descriptive Stats** | `#apa-mean(24.5, sd: 3.2, n: 100)` | $M = 24.50, SD = 3.20, N = 100$ |
 | **Confidence Interval** | `#apa-ci(1.20, 10.20)` | $95\% \text{ CI } [1.20, 10.20]$ |
+| **Confidence Interval (99%)** | `#apa-stat(ci: (1.20, 10.20), level: 99)` | $99\% \text{ CI } [1.20, 10.20]$ |
 
 *Note: The engine automatically suppresses the leading zero for statistics bounded by 1 (such as $p$, $r$, and $\eta_p^2$).*
+
+*Note: `#apa-stat(...)` validates its input. An incomplete call — `#apa-stat(t: 2.45)` without `df`, or a call with no statistic at all — aborts compilation with a message naming the missing parameter and the helper to call instead, rather than rendering an empty result.*
 
 ---
 
