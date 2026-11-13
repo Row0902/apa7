@@ -32,29 +32,56 @@
 ///
 /// Automatically applies:
 /// - Caption placed on top with bold figure number and italic title.
-/// - Alt text description attribute for PDF/UA-1 universal accessibility.
+/// - A required alt text description for PDF/UA-1 universal accessibility.
 /// - Flush-left italicized notes block below the figure.
 ///
 /// Parameters:
 /// - body: The graphic, plot, or image element.
 /// - title: Figure title (content or string). Displayed in italics below figure number.
-/// - alt: Alternative text description for screen readers and accessibility.
+/// - alt: Alternative text description for screen readers. Required unless `decorative: true`.
+/// - decorative: Set to `true` for a graphic that carries no information (a
+///   divider, a repeated logo). A descriptive placeholder is generated, because
+///   PDF/UA-1 rejects a figure with an empty or missing description.
 /// - note: Optional explanatory note placed at the bottom.
 /// - lang: ISO 639-1 language code (default: "en").
 #let apa-figure(
   body,
   title: [Untitled Figure],
   alt: none,
+  decorative: false,
   note: none,
   lang: "en",
 ) = {
   let figure-supplement = if lang == "es" { [Figura] } else { [Figure] }
 
+  let decorative-alt = if lang == "es" {
+    "Imagen decorativa, sin contenido informativo."
+  } else {
+    "Decorative image, no informative content."
+  }
+
+  let has-description = alt != none and alt != ""
+
+  let resolved-alt = if decorative {
+    if has-description {
+      panic(
+        "apa-figure: `decorative: true` and `alt` are mutually exclusive. A graphic either carries information, so describe it in `alt`, or it does not, so pass `decorative: true` and drop `alt`.",
+      )
+    }
+    decorative-alt
+  } else if has-description {
+    alt
+  } else {
+    panic(
+      "apa-figure: `alt` is required. Screen readers announce a figure through its `alt` text, and PDF/UA-1 rejects a figure without one, so a forgotten description would be announced as nothing. Describe what the graphic conveys, or pass `decorative: true` for a graphic that carries no information.",
+    )
+  }
+
   figure(
     caption: title,
     kind: image,
     supplement: figure-supplement,
-    alt: alt,
+    alt: resolved-alt,
     [
       #body
       #render-figure-note(note, lang: lang)

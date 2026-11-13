@@ -13,6 +13,7 @@
 | **Headings** | Often bolded visual text without tags | Generates real `<H1>` through `<H5>` tags for bookmark navigation |
 | **Running Heads & Page Numbers** | Repeatedly read aloud on every page | Isolated as **PDF Artifacts** so screen readers ignore them during continuous reading |
 | **Data Tables** | Flat text or unassociated cells | Enforces `table.header()` so screen readers associate data cells with column names |
+| **Figures** | Alt text optional, and usually forgotten | `#apa-figure` requires `alt` and stops the build without it; `decorative: true` covers graphics that carry no information |
 | **Mathematical Formulas** | Mute visual glyphs or unpronounceable characters | Supports `#eq` and `#deq` with natural language phonetic descriptions |
 | **Contrast & Typography** | Inconsistent line height, justified rivers | 100% black on white (WCAG AAA), ragged-right unhyphenated text for cognitive ease |
 
@@ -60,7 +61,30 @@ Let #eq("f of x", $f(x)$) be a continuous function on the real numbers.
 
 ---
 
-## 5. Validating Your Document
+## 5. Describing Figures with `#apa-figure`
+
+A screen reader announces a figure through its `alt` text. `#apa-figure(...)` therefore requires `alt`, and the requirement is enforced at compile time: a figure with no `alt`, or with an empty one, stops the build with a message that names the parameter and explains what to write.
+
+```typst
+#apa-figure(
+  image("path-model.png", width: 80%),
+  title: [Path Analysis Model],
+  alt: "Path diagram: sleep duration predicts retention directly and through attention span.",
+  note: [Single-headed arrows represent direct paths.],
+)
+```
+
+A graphic that carries no information — a divider rule, a repeated logo — passes `decorative: true` instead. The helper then supplies a neutral description, because PDF/UA-1 rejects a figure with an empty description even when the graphic is decorative.
+
+```typst
+#apa-figure(rect(width: 100%, height: 4pt, fill: black), decorative: true, title: [Divider])
+```
+
+Passing `decorative: true` together with a real `alt` is a contradiction — a graphic either carries information or it does not — and stops the build.
+
+---
+
+## 6. Validating Your Document
 
 To assert that your paper complies with universal accessibility standards, compile with the `--pdf-standard ua-1` flag:
 
@@ -68,4 +92,4 @@ To assert that your paper complies with universal accessibility standards, compi
 typst compile --pdf-standard ua-1 paper.typ paper.pdf
 ```
 
-If any element lacks required alt text or violates heading sequence, the Typst compiler will immediately catch it and report an explicit diagnostic.
+Typst enforces PDF/UA-1 at compile time: a figure with no description, an equation with no description, or a document with no title each stop the build with an explicit diagnostic. `pandect-apa7` adds its own checks on top of Typst's, so `#apa-figure` and `#apa-stat` report the offending parameter and how to supply it, instead of leaving you with a raw PDF/UA-1 error.
