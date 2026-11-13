@@ -216,7 +216,7 @@ typst compile --pdf-standard ua-1 paper.typ paper.pdf
 - **Dual Title Page Modes:** Student cover (course, instructor, due date) and Professional cover (running head, author note).
 - **APA 7 Headings (Levels 1–5):** Automated formatting for all five heading levels (Levels 4 & 5 run-in with automatic trailing period).
 - **Approved Typography:** Native presets for standard APA fonts (Times New Roman 12pt, Georgia 11pt, Calibri 11pt, Arial 11pt) with double line spacing (200%) and 0.5-inch paragraph indentation.
-- **Structured Tables & Figures:** Compliant layouts with captions on top, three-rule horizontal borders, zero vertical lines, and notes at the bottom. `#apa-figure` requires `alt` text and stops the build without it, so no figure reaches a reader undescribed.
+- **Structured Tables & Figures:** Compliant layouts with captions on top, three-rule horizontal borders, zero vertical lines, and notes at the bottom. `#apa-table` takes one array per row and rejects a row whose cell count disagrees with the columns; `#apa-figure` requires `alt` text and stops the build without it, so no figure reaches a reader undescribed.
 - **Abstract & Keywords:** Dedicated unindented abstract page with formatted keywords.
 - **Appendices:** Automatic labeling and formatting with subordinate numbering (`Table A1`, `Figure A1`).
 - **Statistical Reporting (`apa-stat`):** Automatic omission of leading zeros for bounded statistics ($p, r, \eta_p^2$), formatted confidence intervals, and $t$/$F$/$\chi^2$ tests.
@@ -238,7 +238,7 @@ src/
     ├── heading.typ     # Rules and show functions for Heading Levels 1 to 5 (56 lines)
     ├── cover.typ       # Student and Professional cover page renderers (162 lines)
     ├── abstract.typ    # Abstract layout and keywords block (71 lines)
-    ├── table.typ       # APA compliant table styling and notes (93 lines)
+    ├── table.typ       # APA compliant table styling and notes (171 lines)
     ├── figure.typ      # APA compliant figure layouts and captions (107 lines)
     ├── appendix.typ    # Appendix title and letter-sequencing utilities (69 lines)
     ├── reference.typ   # References list, hanging indents, and citation helpers (102 lines)

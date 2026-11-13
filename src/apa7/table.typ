@@ -42,18 +42,96 @@
 /// - title: Table title (content or string). Displayed in italics below table number.
 /// - columns: Column specification (e.g., 3, (1fr, auto, auto)).
 /// - header: Array of header cells. Wrapped into table.header() for PDF/UA-1.
+/// - data: Body as one array per row, e.g. `(([A], [1]), ([B], [2]))`. Preferred shape.
 /// - note: Optional explanatory note placed at the bottom.
 /// - lang: ISO 639-1 language code (default: "en").
-/// - ..cells: Body data cells.
+/// - ..cells: Body data cells, flat. Every column after a gap would shift, so
+///   the count must be a multiple of the column count.
 #let apa-table(
   title: [Untitled Table],
   columns: auto,
   header: (),
+  data: none,
   note: none,
   lang: "en",
   ..cells,
 ) = {
   let table-supplement = if lang == "es" { [Tabla] } else { [Table] }
+  let fail(message) = panic("apa-table: " + message)
+
+  // `columns` is a count, an array of track sizes, or one track: in every
+  // shape the number of columns is known, so a mismatch is always detectable.
+  let column-count = if type(columns) == int {
+    columns
+  } else if type(columns) == array {
+    columns.len()
+  } else {
+    1
+  }
+
+  let flat = cells.pos()
+
+  let header-cells = if header == none {
+    ()
+  } else if type(header) == array {
+    header
+  } else {
+    fail(
+      "`header` must be an array of cells, e.g. `header: ([*A*], [*B*])`, but got " + type(header) + ".",
+    )
+  }
+
+  let rows = if data == none {
+    ()
+  } else if type(data) == array {
+    data
+  } else {
+    fail(
+      "`data` must be an array of rows, e.g. `data: (([1], [2]), ([3], [4]))`, but got " + type(data) + ".",
+    )
+  }
+
+  if rows.len() > 0 and flat.len() > 0 {
+    fail(
+      "pass either `data` (one array per row) or positional cells, not both: mixing the two body shapes leaves the row order undefined.",
+    )
+  }
+
+  if column-count < 1 {
+    fail("`columns` must describe at least one column.")
+  }
+
+  // A header shorter than the table pulls the first body row into the header
+  // row, which is the silent shift this helper exists to prevent, so its width
+  // must match exactly. A table with no header stays allowed.
+  if header-cells.len() > 0 and header-cells.len() != column-count {
+    fail(
+      "`header` has " + str(header-cells.len()) + " cells but the table has " + str(column-count) + " column(s), so the header would not line up with the body. Give exactly " + str(column-count) + " header cells, or change `columns`.",
+    )
+  }
+
+  let body = if rows.len() > 0 {
+    for (index, row) in rows.enumerate() {
+      if type(row) != array {
+        fail(
+          "row " + str(index + 1) + " of `data` is not an array of cells. Write `data: ((" + "…" + "), (" + "…" + "))`, one array per row.",
+        )
+      }
+      if row.len() != column-count {
+        fail(
+          "row " + str(index + 1) + " of `data` has " + str(row.len()) + " cells but the table has " + str(column-count) + " column(s), so its cells would shift into the neighbouring columns.",
+        )
+      }
+    }
+    rows.flatten()
+  } else {
+    if calc.rem(flat.len(), column-count) != 0 {
+      fail(
+        "`cells` has " + str(flat.len()) + " cells but the table has " + str(column-count) + " column(s), so every row after the gap shifts. Give a multiple of " + str(column-count) + " cells, or pass `data: ((" + "…" + "), (" + "…" + "))` with one array per row.",
+      )
+    }
+    flat
+  }
 
   figure(
     caption: title,
@@ -64,9 +142,9 @@
         columns: columns,
         stroke: none,
         table.hline(stroke: 1pt),
-        table.header(..header),
+        table.header(..header-cells),
         table.hline(stroke: 0.5pt),
-        ..cells,
+        ..body,
         table.hline(stroke: 1pt),
       )
       #render-table-note(note, lang: lang)

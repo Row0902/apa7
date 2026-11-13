@@ -61,6 +61,8 @@ Configures the root document lifecycle, metadata, layout, typography, headings, 
 
 Constructs an APA 7 table with semantic header tags for PDF/UA-1 accessibility, 3 horizontal rules, and flush-left notes.
 
+Pass the body as `data`, one array per row. The row shape is checked before rendering: a short or long row stops the build naming the row and both counts.
+
 ```typst
 #apa-table(
   title: [Table Title],
@@ -68,10 +70,25 @@ Constructs an APA 7 table with semantic header tags for PDF/UA-1 accessibility, 
   header: ([*Variable*], [*Sample 1*], [*Sample 2*]),
   note: [Explanatory text for the entire table.],
   lang: "en",
-  [Mean Age], [21.4], [22.1],
-  [Score], [88.5], [89.2],
+  data: (
+    ([Mean Age], [21.4], [22.1]),
+    ([Score], [88.5], [89.2]),
+  ),
 )
 ```
+
+The flat positional form keeps working for existing documents, but its cell count must be a multiple of the column count, and a header must have exactly one cell per column:
+
+```typst
+// Still valid: six cells in three columns.
+#apa-table(columns: (2fr, 1fr, 1fr), header: ([*A*], [*B*], [*C*]), [1], [2], [3], [4], [5], [6])
+
+// Rejected: `cells` has 7 cells but the table has 3 column(s), so every row
+// after the gap shifts. The message names both counts.
+#apa-table(columns: (2fr, 1fr, 1fr), header: ([*A*], [*B*], [*C*]), [1], [2], [3], [4], [5], [6], [7])
+```
+
+`columns: auto` and a single track (`1fr`) describe one column; passing both `data` and positional cells is rejected as ambiguous.
 
 ### `#apa-figure(...)`
 
