@@ -41,7 +41,6 @@ jobs:
       - name: Generate release bot token
         id: release-token
         if: (env.CLIENT_ID != '' || env.APP_ID != '') && env.PRIVATE_KEY != ''
-        continue-on-error: true
         uses: actions/create-github-app-token@v3
         with:
           client-id: ${{ secrets.CUTVER_CLIENT_ID || secrets.CUTVER_APP_ID }}
@@ -52,39 +51,118 @@ jobs:
           APP_ID: ${{ secrets.CUTVER_APP_ID }}
           PRIVATE_KEY: ${{ secrets.CUTVER_APP_PRIVATE_KEY }}
 
+      # A silent fallback to the default token would cut a release that is not
+      # attributed to the bot, and would hide a missing or broken app secret.
+      - name: Require the release bot token
+        run: |
+          if [ -z "${{ steps.release-token.outputs.token }}" ]; then
+            echo "::error::The cutver-release app token is missing. Set CUTVER_APP_ID (or CUTVER_CLIENT_ID) and CUTVER_APP_PRIVATE_KEY; this workflow never falls back to the default token."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          token: ${{ steps.release-token.outputs.token }}
 
       - name: Setup Git bot credentials
         run: |
           git config --global user.name "cutver-release[bot]"
           git config --global user.email "${{ steps.release-token.outputs.app-slug || 'cutver-release' }}[bot]@users.noreply.github.com"
 
-      - name: Install Cutver CLI
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+        with:
+          typst-version: "0.15.1"
+
+      - name: Install Cutver CLI (plugin-enabled)
         uses: cutver/setup@v1
+        with:
+          plugins: "true"
+
+      # The plugin artifact is code and this job carries the app token: refuse to
+      # fetch or load it from anything but a real `main` checkout.
+      - name: Require main before loading release plugins
+        run: |
+          set -euo pipefail
+          branch=$(git symbolic-ref --quiet --short HEAD || true)
+          if [ "$branch" != "main" ]; then
+            echo "::error::Refusing to restore or load release plugins on '${branch:-detached HEAD}'; releases run from main only."
+            exit 1
+          fi
+
+      # Fetches the pinned github-publish WASM artifact into the plugin cache and
+      # verifies its digest. Drivers load eagerly, so this must happen before any
+      # other cutver invocation.
+      - name: Restore pinned Cutver plugins
+        run: cutver plugin restore
 
       - name: Execute Cutver Release
         uses: cutver/release@v1
         id: cutver
         env:
-          GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release-token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.release-token.outputs.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           command: release
           bump: ${{ github.event.inputs.bump || 'auto' }}
           first-release: ${{ github.event.inputs.first_release }}
           dry-run: ${{ github.event.inputs.dry_run || false }}
+          template: ".github/templates/cutver/RELEASE.md"
 
-      - name: Publish GitHub Release
+      # The github-publish plugin creates the release as a DRAFT after the tag
+      # push. This step only promotes that draft; it never creates a release.
+      - name: Publish the draft release
         if: steps.cutver.outputs.released == 'true' && github.event.inputs.dry_run != true && github.event.inputs.dry_run != 'true'
         env:
-          GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release-token.outputs.token }}
+          TAG: ${{ steps.cutver.outputs.tag }}
+          NOTES: ${{ steps.cutver.outputs.notes-path }}
+          RELEASE_TITLE: pandect-apa7 ${{ steps.cutver.outputs.version }}
         run: |
-          gh release create "${{ steps.cutver.outputs.tag }}" \
-            --title "${{ steps.cutver.outputs.tag }}" \
-            --notes-file "${{ steps.cutver.outputs.notes-path }}"
+          set -euo pipefail
+
+          error() {
+            echo "::error::$*"
+            exit 1
+          }
+
+          if ! state=$(gh release view "$TAG" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>&1); then
+            # The plugin owns the body, but the tag is already pushed: if it never
+            # created its draft, publish from the rendered notes instead of stranding
+            # the tag in an unpublished state that a re-run cannot repair.
+            gh release create "$TAG" --title "$RELEASE_TITLE" --notes-file "$NOTES" --verify-tag
+            echo "Created $TAG from rendered notes because the plugin did not create a draft."
+            exit 0
+          fi
+
+          case "$state" in
+            published)
+              echo "Release $TAG is already published; nothing to do."
+              exit 0
+              ;;
+            draft)
+              ;;
+            *)
+              error "Release $TAG is in an unexpected state: '$state'."
+              ;;
+          esac
+
+          # The plugin owns the title and the body: it created the draft from the
+          # rendered entry and the title_template. Only the draft flag changes here.
+          gh release edit "$TAG" --draft=false
+
+          if ! state=$(gh release view "$TAG" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>&1); then
+            error "Could not re-read release $TAG after promotion: $state"
+          fi
+
+          if [ "$state" = "draft" ]; then
+            error "Release $TAG is still a draft after gh release edit."
+          fi
+
+          echo "Promoted $TAG to a published release."
 
       - name: Report Release Summary
         if: steps.cutver.outputs.released == 'true'
