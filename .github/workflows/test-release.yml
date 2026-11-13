@@ -45,15 +45,30 @@ jobs:
       - name: Name the checked-out commit main for the cutver branch guard
         run: git switch -C main
 
-      - name: Install Cutver CLI
+      - name: Install Cutver CLI (plugin-enabled)
         uses: cutver/setup@v1
+        with:
+          plugins: "true"
 
+      # The plugin manager is built eagerly, so restore the pinned artifact before
+      # any cutver command — including `cutver doctor`.
+      - name: Restore pinned Cutver plugins
+        run: cutver plugin restore
+
+      # No Typst setup here on purpose: preflight never runs under --dry-run, so a
+      # compiler install would be dead weight in this simulation workflow.
       - name: Validate Manifest Health & Changelog
         run: cutver doctor --check-changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Execute Cutver Bump Simulation
         uses: cutver/release@v1
         id: cutver
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           command: bump
           bump: ${{ github.event.inputs.bump || 'auto' }}

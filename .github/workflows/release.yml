@@ -63,28 +63,78 @@ jobs:
           git config --global user.name "cutver-release[bot]"
           git config --global user.email "${{ steps.release-token.outputs.app-slug || 'cutver-release' }}[bot]@users.noreply.github.com"
 
-      - name: Install Cutver CLI
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+        with:
+          typst-version: "0.15.1"
+
+      - name: Install Cutver CLI (plugin-enabled)
         uses: cutver/setup@v1
+        with:
+          plugins: "true"
+
+      # Fetches the pinned github-publish WASM artifact into the plugin cache and
+      # verifies its digest. Drivers load eagerly, so this must happen before any
+      # other cutver invocation.
+      - name: Restore pinned Cutver plugins
+        run: cutver plugin restore
 
       - name: Execute Cutver Release
         uses: cutver/release@v1
         id: cutver
         env:
           GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           command: release
           bump: ${{ github.event.inputs.bump || 'auto' }}
           first-release: ${{ github.event.inputs.first_release }}
           dry-run: ${{ github.event.inputs.dry_run || false }}
+          template: ".github/templates/cutver/RELEASE.md"
 
-      - name: Publish GitHub Release
+      # The github-publish plugin creates the release as a DRAFT after the tag
+      # push. This step only promotes that draft; it never creates a release.
+      - name: Publish the draft release
         if: steps.cutver.outputs.released == 'true' && github.event.inputs.dry_run != true && github.event.inputs.dry_run != 'true'
         env:
           GH_TOKEN: ${{ steps.release-token.outputs.token || secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.cutver.outputs.tag }}
         run: |
-          gh release create "${{ steps.cutver.outputs.tag }}" \
-            --title "${{ steps.cutver.outputs.tag }}" \
-            --notes-file "${{ steps.cutver.outputs.notes-path }}"
+          set -euo pipefail
+
+          error() {
+            echo "::error::$*"
+            exit 1
+          }
+
+          if ! state=$(gh release view "$TAG" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>&1); then
+            error "Could not read release $TAG: $state — a missing release means the github-publish plugin never created its draft; check the Execute Cutver Release logs."
+          fi
+
+          case "$state" in
+            published)
+              echo "Release $TAG is already published; nothing to do."
+              exit 0
+              ;;
+            draft)
+              ;;
+            *)
+              error "Release $TAG is in an unexpected state: '$state'."
+              ;;
+          esac
+
+          gh release edit "$TAG" --draft=false --title "Release $TAG"
+
+          if ! state=$(gh release view "$TAG" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>&1); then
+            error "Could not re-read release $TAG after promotion: $state"
+          fi
+
+          if [ "$state" = "draft" ]; then
+            error "Release $TAG is still a draft after gh release edit."
+          fi
+
+          echo "Promoted $TAG to a published release."
 
       - name: Report Release Summary
         if: steps.cutver.outputs.released == 'true'

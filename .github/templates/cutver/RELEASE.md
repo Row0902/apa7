@@ -1,45 +1,45 @@
-## [{{ tag }}] - {{ date }}
+## {{ tag }} — {{ date }}
 
 {%- if breaking %}
-### ⚠️ Breaking Changes
+
+> [!WARNING]
+> **Breaking changes**
 {% for c in commits if c.is_breaking -%}
-- {{ c.line }}
+> - {{ c.line }}
 {%- if c.breaking_description %}
-  > ⚠️ **Migration**: {{ c.breaking_description }}
+>   > **Migration**: {{ c.breaking_description }}
 {%- endif %}
 {% endfor %}
 {%- endif %}
 
-{%- for type, type_commits in commits | group_by_type %}
-{%- if type == 'feat' %}
-### 🚀 Features & Enhancements
-{%- elif type == 'fix' %}
-### 🐛 Bug Fixes
-{%- elif type == 'perf' %}
-### ⚡ Performance Improvements
-{%- elif type == 'refactor' %}
-### 🔄 Code Refactoring
-{%- elif type == 'docs' %}
-### 📚 Documentation
-{%- elif type in ['chore', 'build', 'ci', 'test', 'style', 'revert'] %}
-### 🛠️ Maintenance & Dependencies
-{%- else %}
-### 📦 {{ type | title }}
-{%- endif %}
-{% for c in type_commits if not c.is_breaking -%}
+{%- for section, section_commits in commits | group_by_section %}
+{%- set visible = section_commits | rejectattr("is_breaking") %}
+{%- if visible %}
+
+### {{ section }}
+{% for c in visible -%}
 - {{ c.line }}
 {% endfor %}
+{%- endif %}
 {%- endfor %}
 
-{%- if contributors %}
-### 👥 Contributors
-{% for author in contributors -%}
-- @{{ author }}
-{% endfor %}
+{%- if first_time_contributors %}
+
+### 🌱 First-time contributors
+{% for author in first_time_contributors -%}
+@{{ author }}{{ " · " if not loop.last }}
+{%- endfor %}
 {%- endif %}
 
----
-{%- if compare_url %}
-**Full Changelog**: {{ compare_url }}
+{%- if contributors %}
+
+### 👥 Contributors
+{% for author in contributors -%}
+@{{ author }}{{ " · " if not loop.last }}
+{%- endfor %}
 {%- endif %}
-{%- if env("GITHUB_RUN_NUMBER") %} • *CI Build #{{ env("GITHUB_RUN_NUMBER") }}*{%- endif %}
+
+{%- if compare_url %}
+
+[{% if previous_tag %}Compare {{ previous_tag }}...{{ tag }}{% else %}Full changelog{% endif %}]({{ compare_url }})
+{%- endif %}
