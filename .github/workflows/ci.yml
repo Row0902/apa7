@@ -20,8 +20,30 @@ jobs:
         with:
           typst-version: "0.15.1"
 
+      # The CI toolchain is one minor patch ahead of the `compiler` declared in
+      # typst.toml on purpose: `compiler = "0.15.0"` is the OLDEST compiler a
+      # user may bring, while CI runs the newest 0.15.x to catch regressions
+      # early. Do not "align" them by raising the manifest version — that would
+      # tell Typst Universe the package needs a compiler many users do not have.
       - name: Verify Typst compiler version
         run: typst --version
+
+      # Coverage map. Every documented surface lives in exactly one of these
+      # four places; a new feature belongs in examples/features.typ unless it
+      # needs a full manuscript to be meaningful.
+      # - examples/minimal.typ: professional cover, tables, figures, appendices,
+      #   APA headings, a t-test, a confidence interval, an appendix table.
+      # - examples/student.typ: student cover, course/instructor/date fields.
+      # - examples/spanish_example.typ: Spanish localization, STEM operators
+      #   (sen, tg, mcd), theorem environments, bibliography in Spanish.
+      # - examples/features.typ: the theorem family (lemma, corollary,
+      #   proposition, example), apa-proof(title:), every apa-stat branch
+      #   (f, r, chi2, z, m, ci with level), format-num, format-p, apa-ci(level:),
+      #   paper-size "a4", font/font-size/region overrides, cover: false,
+      #   repeat-title: false, apa-appendix(letter:, multi:), cite-*(supplement:).
+      # - tests/: rendered strings and input validation of the helpers.
+      - name: Compile Feature Coverage Paper (PDF/UA-1)
+        run: typst compile --root . --pdf-standard ua-1 examples/features.typ output-features.pdf
 
       - name: Compile Minimal / Professional Paper (PDF/UA-1)
         run: typst compile --root . --pdf-standard ua-1 examples/minimal.typ output-minimal.pdf
@@ -34,3 +56,38 @@ jobs:
 
       - name: Run statistics test suite
         run: bash tests/run.sh
+
+      # The template is published through Typst Universe and imports the released
+      # package by version, so it is never exercised by the steps above. Compile
+      # it against this checkout instead: a broken template body must fail here,
+      # not in the first `typst init` a user runs.
+      - name: Compile the template against the local package (PDF/UA-1)
+        run: |
+          set -euo pipefail
+          pinned="$(sed -n 's|^#import "@preview/pandect-apa7:\([0-9][0-9.]*\)".*|\1|p' template/main.typ)"
+          if [ -z "$pinned" ]; then
+            echo "::error::template/main.typ does not import @preview/pandect-apa7:<version>; this gate would be a no-op."
+            exit 1
+          fi
+
+          declared="$(sed -n 's/^version *= *"\(.*\)"/\1/p' typst.toml | head -1)"
+          echo "template pins $pinned, package declares $declared"
+
+          # The pin must never be ahead of the package: that version cannot exist
+          # yet. It may lag while a Typst Universe submission is pending, because
+          # `typst init` can only resolve a version Universe already serves.
+          newest="$(printf '%s\n%s\n' "$pinned" "$declared" | sort -V | tail -1)"
+          if [ "$newest" != "$declared" ]; then
+            echo "::error::template/main.typ pins $pinned, ahead of typst.toml ($declared)."
+            exit 1
+          fi
+
+          mkdir -p build
+          cp template/main.typ template/sample.bib build/
+          sed -i 's|@preview/pandect-apa7:[0-9][0-9.]*|../src/lib.typ|' build/main.typ
+          if ! grep -q '"../src/lib.typ"' build/main.typ; then
+            echo "::error::the local import substitution changed nothing; the template gate is broken."
+            exit 1
+          fi
+
+          typst compile --root . --pdf-standard ua-1 build/main.typ output-template.pdf

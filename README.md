@@ -264,6 +264,8 @@ typst compile --pdf-standard ua-1 examples/minimal.typ examples/minimal.pdf
 bash tests/run.sh
 ```
 
+The bundled examples split the documented surface between them, so CI compiles all four: `minimal.typ` (professional paper, tables, figures, appendices), `student.typ` (student cover), `spanish_example.typ` (Spanish localization and STEM operators), and `features.typ` (the theorem family, every `apa-stat` branch, `format-num`/`format-p`, paper-level overrides, appendix letters and citation supplements). A new documented feature belongs in `features.typ` unless it needs a whole manuscript to be meaningful.
+
 ---
 
 ## 🚀 Release Orchestration

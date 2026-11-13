@@ -11,3 +11,6 @@ Thumbs.db
 Desktop.ini
 *:Zone.Identifier
 cutver.ci.toml
+
+# CI scratch directory (template gate)
+build/
