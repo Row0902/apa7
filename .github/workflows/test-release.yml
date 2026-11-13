@@ -56,19 +56,18 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: cutver plugin restore
 
-      # A pull request can edit cutver.toml and declare any WASM it likes, so the
-      # preflight runs against this copy with every [plugins.*] table stripped.
-      - name: Strip plugin declarations from the preflight config
-        run: awk '/^\[plugins\./ {skip=1} /^\[/ && !/^\[plugins\./ {skip=0} !skip' cutver.toml > cutver.ci.toml
-
-      # The strip is text surgery; the only trustworthy check is cutver's own parser.
-      - name: Refuse to run the preflight with any plugin declared
+      # A pull request can edit cutver.toml, so the preflight runs on a copy built by
+      # KEEPING only the tables the simulation needs. Blacklisting [plugins.*] is not
+      # enough: TOML accepts whitespace inside a header and dotted keys outside one.
+      - name: Build a plugin-free preflight config
         run: |
           set -euo pipefail
-          declared=$(cutver --config cutver.ci.toml plugin list 2>&1 || true)
-          if ! grep -qF "No plugins are configured" <<<"$declared"; then
-            echo "::error::cutver.ci.toml still declares a plugin after sanitizing; refusing to load it."
-            printf '%s\n' "$declared"
+          awk '
+            /^[[:space:]]*\[/ { keep = ($0 ~ /^[[:space:]]*\[\[?[[:space:]]*(manifest|changelog|git|preflight)([[:space:]]|\]|\.)/); if (keep) print; next }
+            keep { print }
+          ' cutver.toml > cutver.ci.toml
+          if grep -qi plugin cutver.ci.toml; then
+            echo "::error::cutver.ci.toml still mentions a plugin after whitelisting; refusing to run."
             exit 1
           fi
 
