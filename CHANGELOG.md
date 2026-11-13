@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## v0.2.0 — 2026-11-13
+
+### ✨ Features
+- **release**: cut releases with the github-publish plugin in [#3](https://github.com/Row0902/pandect-apa7/pull/3) ([e630254](https://github.com/Row0902/pandect-apa7/commit/e63025457eb137b483e6ba92b0fd6159f3127fcd)) by @Row0902
+
+### 🐛 Fixes
+- **docs**: use absolute GitHub URLs for assets/docs and set compiler to 0.15.0 ([ee3b329](https://github.com/Row0902/pandect-apa7/commit/ee3b329aeddef46470937391ceb8189ee6971189)) by @Row0902
+- **ci**: robust dry_run boolean evaluation for publish release step ([f0363aa](https://github.com/Row0902/pandect-apa7/commit/f0363aae3f171780b0c2df6daba2ff1c45dd33b7)) by @Row0902
+
+### 🔄 Refactoring
+- rename package to pandect-apa7 ([d5d0253](https://github.com/Row0902/pandect-apa7/commit/d5d02532cfc15fa236452e2f4bede351ee0f7400)) by @Row0902
+
+### 📚 Documentation
+- pin assets and documentation links to v0.1.0 release tag ([dc3479d](https://github.com/Row0902/pandect-apa7/commit/dc3479df2be7c1e7686ff3c3207fc5158a8faa2f)) by @Row0902
+- add release orchestration section highlighting cutver ([3f35259](https://github.com/Row0902/pandect-apa7/commit/3f35259b217d132df9466d3fa809ad64e6759913)) by @Row0902
+- add official released with cutver badge to readme ([8ab217c](https://github.com/Row0902/pandect-apa7/commit/8ab217c3879d07ab376e994a3d19d0b9b2bb88fe)) by @Row0902
+- **changelog**: position unreleased section at top of changelog ([32b843c](https://github.com/Row0902/pandect-apa7/commit/32b843c47638780355de23b3ff438c47a49290bb)) by @Row0902
+
+### 🛠️ Maintenance
+- **release**: let the cutver preflight run on pull requests in [#2](https://github.com/Row0902/pandect-apa7/pull/2) ([206e379](https://github.com/Row0902/pandect-apa7/commit/206e379f32de5f37a1f8a550e136c67334073b12)) by @Row0902
+
+### 👥 Contributors
+@Row0902
+
+[Compare v0.1.0...v0.2.0](https://github.com/Row0902/pandect-apa7/compare/v0.1.0...v0.2.0)
 ## [Unreleased]
 
 ## [v0.1.0] - 2026-11-10
