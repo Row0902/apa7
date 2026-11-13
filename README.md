@@ -242,7 +242,7 @@ src/
     ├── figure.typ      # APA compliant figure layouts and captions (80 lines)
     ├── appendix.typ    # Appendix title and letter-sequencing utilities (69 lines)
     ├── reference.typ   # References list, hanging indents, and citation helpers (102 lines)
-    ├── stat.typ        # Statistical reporting engine (apa-stat, apa-t, etc.) (204 lines)
+    ├── stat.typ        # Statistical reporting engine (apa-stat, apa-t, etc.) (254 lines)
     └── theorem.typ     # STEM academic blocks and accessible math helpers (162 lines)
 ```
 
@@ -259,6 +259,9 @@ cd pandect-apa7
 
 # Compile an example with Universal Accessibility (PDF/UA-1)
 typst compile --pdf-standard ua-1 examples/minimal.typ examples/minimal.pdf
+
+# Run the statistics test suite (rendered strings and input validation)
+bash tests/run.sh
 ```
 
 ---

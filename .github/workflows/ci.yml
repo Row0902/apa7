@@ -31,3 +31,6 @@ jobs:
 
       - name: Compile Spanish Paper with STEM Blocks (PDF/UA-1)
         run: typst compile --root . --pdf-standard ua-1 examples/spanish_example.typ output-spanish.pdf
+
+      - name: Run statistics test suite
+        run: bash tests/run.sh

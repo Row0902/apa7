@@ -134,7 +134,15 @@ Automates APA 7 formatting rules (leading zero elimination for bounded stats, co
 
 // Confidence Interval: 95% CI [1.20, 10.20]
 #apa-ci(1.20, 10.20)
+
+// Confidence Interval at another level: 99% CI [1.20, 10.20]
+#apa-stat(ci: (1.20, 10.20), level: 99)
+
+// `level` applies to `ci` only; elsewhere it aborts instead of being ignored
+#apa-ci(1.20, 10.20, level: 99)
 ```
+
+`#apa-stat(...)` refuses incomplete input instead of rendering nothing. `#apa-stat(t: 2.45)` aborts compilation with a message naming the missing `df` and the helper to call instead; the same happens for `f` without `df1`/`df2`, `chi2` without `df`, a `ci` that is not a `(lower, upper)` pair, a `level` passed without a `ci` to apply it to, and a call with no statistic at all. `level` shapes only the confidence-interval branch.
 
 ---
 
