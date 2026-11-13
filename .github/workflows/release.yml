@@ -119,6 +119,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.release-token.outputs.token }}
           TAG: ${{ steps.cutver.outputs.tag }}
+          NOTES: ${{ steps.cutver.outputs.notes-path }}
+          RELEASE_TITLE: pandect-apa7 ${{ steps.cutver.outputs.version }}
         run: |
           set -euo pipefail
 
@@ -128,7 +130,12 @@ jobs:
           }
 
           if ! state=$(gh release view "$TAG" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>&1); then
-            error "Could not read release $TAG: $state — a missing release means the github-publish plugin never created its draft; check the Execute Cutver Release logs."
+            # The plugin owns the body, but the tag is already pushed: if it never
+            # created its draft, publish from the rendered notes instead of stranding
+            # the tag in an unpublished state that a re-run cannot repair.
+            gh release create "$TAG" --title "$RELEASE_TITLE" --notes-file "$NOTES" --verify-tag
+            echo "Created $TAG from rendered notes because the plugin did not create a draft."
+            exit 0
           fi
 
           case "$state" in

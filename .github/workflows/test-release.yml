@@ -61,6 +61,17 @@ jobs:
       - name: Strip plugin declarations from the preflight config
         run: awk '/^\[plugins\./ {skip=1} /^\[/ && !/^\[plugins\./ {skip=0} !skip' cutver.toml > cutver.ci.toml
 
+      # The strip is text surgery; the only trustworthy check is cutver's own parser.
+      - name: Refuse to run the preflight with any plugin declared
+        run: |
+          set -euo pipefail
+          declared=$(cutver --config cutver.ci.toml plugin list 2>&1 || true)
+          if ! grep -qF "No plugins are configured" <<<"$declared"; then
+            echo "::error::cutver.ci.toml still declares a plugin after sanitizing; refusing to load it."
+            printf '%s\n' "$declared"
+            exit 1
+          fi
+
       # No Typst setup here on purpose: a PR run loads no plugin at all, and the
       # bump simulation is a dry run, so a compiler install would be dead weight.
       - name: Validate Manifest Health & Changelog
