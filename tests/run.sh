@@ -42,6 +42,12 @@ else
   fail "render: tests/figure.typ" "$output"
 fi
 
+if output="$(typst compile --root . tests/table.typ "$workdir/table.pdf" 2>&1)"; then
+  pass "render: tests/table.typ"
+else
+  fail "render: tests/table.typ" "$output"
+fi
+
 # 2. Compile-time failures. Each fixture must fail and mention every needle.
 expect_compile_error() {
   local fixture="$1"
@@ -78,6 +84,15 @@ expect_compile_error no-statistic.typ '`ci`' 'apa-mean'
 expect_compile_error figure-without-alt.typ '`alt`' 'decorative: true' 'PDF/UA-1'
 expect_compile_error figure-empty-alt.typ '`alt`' 'decorative: true'
 expect_compile_error figure-decorative-with-alt.typ '`decorative: true`' 'mutually exclusive'
+expect_compile_error table-cells-mismatch.typ '`cells`' '7 cells' '3 column(s)' 'multiple of 3' 'data: ((…), (…))'
+expect_compile_error table-header-too-long.typ '`header`' '3 cells' '2 column(s)'
+expect_compile_error table-header-shorter.typ '`header`' '1 cells' '3 column(s)'
+expect_compile_error table-header-not-array.typ '`header`' 'must be an array'
+expect_compile_error table-data-row-mismatch.typ 'row 2 of `data`' '2 cells' '3 column(s)'
+expect_compile_error table-data-and-cells.typ 'not both'
+expect_compile_error table-data-row-not-array.typ 'row 2 of `data`' 'not an array'
+expect_compile_error table-columns-zero.typ '`columns`' 'at least one column'
+expect_compile_error table-one-track-two-columns.typ '`cells`' '3 cells' '2 column(s)'
 
 printf '\n%d passed, %d failed\n' "$passed" "$failed"
 exit "$status"

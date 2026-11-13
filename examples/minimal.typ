@@ -98,8 +98,10 @@ in the experimental group (#apa-mean(74.1, sd: 7.9)) than in the control group (
   columns: (2fr, 1fr, 1fr),
   header: ([*Measure*], [*Pre-Test (_M_)*], [*Post-Test (_M_)*]),
   note: [All values are scored on a standardized 0–100 scale. Standard deviations in parentheses.],
-  [Working Memory Capacity], [68.4 (8.2)], [74.1 (7.9)],
-  [Attention Span Index], [52.3 (6.5)], [61.0 (5.8)],
+  data: (
+    ([Working Memory Capacity], [68.4 (8.2)], [74.1 (7.9)]),
+    ([Attention Span Index], [52.3 (6.5)], [61.0 (5.8)]),
+  ),
 )
 
 #apa-figure(
@@ -120,8 +122,10 @@ in the experimental group (#apa-mean(74.1, sd: 7.9)) than in the control group (
     columns: (2fr, 1fr),
     header: ([*Item Domain*], [*Cronbach's _α_*]),
     note: [Values reflect reliability estimates across all participants.],
-    [Spatial Span Subtest], [0.89],
-    [Digit Ordering Subtest], [0.84],
+    data: (
+      ([Spatial Span Subtest], [0.89]),
+      ([Digit Ordering Subtest], [0.84]),
+    ),
   )
 ]
 

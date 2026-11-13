@@ -84,8 +84,10 @@ A continuación se presenta la tabla y figura correspondientes:
   header: ([*Dimensión*], [*Línea Base (_M_)*], [*Post-Prueba (_M_)*]),
   note: [Puntajes evaluados en escala normalizada de 0 a 100 puntos.],
   lang: "es",
-  [Capacidad de Retención], [71.2 (6.4)], [64.8 (7.1)],
-  [Atención Sostenida], [83.5 (5.2)], [72.3 (6.9)],
+  data: (
+    ([Capacidad de Retención], [71.2 (6.4)], [64.8 (7.1)]),
+    ([Atención Sostenida], [83.5 (5.2)], [72.3 (6.9)]),
+  ),
 )
 
 #apa-figure(
