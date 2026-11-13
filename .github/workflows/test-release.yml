@@ -36,6 +36,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      # cutver.toml pins `require_branch = "main"`, but on pull_request events
+      # actions/checkout leaves a detached HEAD, where `git symbolic-ref --short HEAD`
+      # exits 128 and cutver's git guard aborts the simulation. Re-creating a local
+      # `main` at the checked-out commit lets this preflight run for a PR too: the
+      # name is only what the guard reads, while the tree stays the candidate's.
+      # Nothing here can release anything — the bump below is a dry run.
+      - name: Name the checked-out commit main for the cutver branch guard
+        run: git switch -C main
+
       - name: Install Cutver CLI
         uses: cutver/setup@v1
 
