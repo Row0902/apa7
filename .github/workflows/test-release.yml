@@ -48,28 +48,37 @@ jobs:
       - name: Install Cutver CLI (plugin-enabled)
         uses: cutver/setup@v1
         with:
-          plugins: "true"
+          plugins: ${{ github.event_name == 'workflow_dispatch' }}
 
       # The plugin manager is built eagerly, so restore the pinned artifact before
       # any cutver command — including `cutver doctor`.
       - name: Restore pinned Cutver plugins
+        if: github.event_name == 'workflow_dispatch'
         run: cutver plugin restore
 
-      # No Typst setup here on purpose: preflight never runs under --dry-run, so a
-      # compiler install would be dead weight in this simulation workflow.
+      # A pull request can edit cutver.toml and declare any WASM it likes, so the
+      # preflight runs against this copy with every [plugins.*] table stripped.
+      - name: Strip plugin declarations from the preflight config
+        run: awk '/^\[plugins\./ {skip=1} /^\[/ && !/^\[plugins\./ {skip=0} !skip' cutver.toml > cutver.ci.toml
+
+      # No Typst setup here on purpose: a PR run loads no plugin at all, and the
+      # bump simulation is a dry run, so a compiler install would be dead weight.
       - name: Validate Manifest Health & Changelog
-        run: cutver doctor --check-changelog
+        run: cutver --config cutver.ci.toml doctor --check-changelog
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A pull request run loads no plugin, so it is given no token.
+          GITHUB_TOKEN: ${{ github.event_name == 'workflow_dispatch' && secrets.GITHUB_TOKEN || '' }}
           GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Execute Cutver Bump Simulation
         uses: cutver/release@v1
         id: cutver
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A pull request run loads no plugin, so it is given no token.
+          GITHUB_TOKEN: ${{ github.event_name == 'workflow_dispatch' && secrets.GITHUB_TOKEN || '' }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         with:
+          config: cutver.ci.toml
           command: bump
           bump: ${{ github.event.inputs.bump || 'auto' }}
           first-release: ${{ github.event.inputs.first_release || false }}

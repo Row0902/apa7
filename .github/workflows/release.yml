@@ -81,6 +81,17 @@ jobs:
         with:
           plugins: "true"
 
+      # The plugin artifact is code and this job carries the app token: refuse to
+      # fetch or load it from anything but a real `main` checkout.
+      - name: Require main before loading release plugins
+        run: |
+          set -euo pipefail
+          branch=$(git symbolic-ref --quiet --short HEAD || true)
+          if [ "$branch" != "main" ]; then
+            echo "::error::Refusing to restore or load release plugins on '${branch:-detached HEAD}'; releases run from main only."
+            exit 1
+          fi
+
       # Fetches the pinned github-publish WASM artifact into the plugin cache and
       # verifies its digest. Drivers load eagerly, so this must happen before any
       # other cutver invocation.
