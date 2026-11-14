@@ -20,8 +20,35 @@ jobs:
         with:
           typst-version: "0.15.1"
 
+      # The CI toolchain is one minor patch ahead of the `compiler` declared in
+      # typst.toml on purpose: `compiler = "0.15.0"` is the OLDEST compiler a
+      # user may bring, while CI runs the newest 0.15.x to catch regressions
+      # early. Do not "align" them by raising the manifest version — that would
+      # tell Typst Universe the package needs a compiler many users do not have.
       - name: Verify Typst compiler version
         run: typst --version
+
+      # Coverage map. The documented surface is spread across these files; a new
+      # feature belongs in examples/features.typ unless it needs a full manuscript
+      # to be meaningful. Several items appear in more than one example on purpose
+      # (a default appendix, a theorem in both languages), so this map says where a
+      # feature is exercised, not that it is exercised only once.
+      # - examples/minimal.typ: professional cover, tables, figures, appendices
+      #   (default letter), APA headings, a t-test, a confidence interval, an
+      #   appendix table, theorem and proof.
+      # - examples/student.typ: student cover, course/instructor/date fields.
+      # - examples/spanish_example.typ: Spanish localization, the STEM operator
+      #   helpers (`sen` is rendered; `tg` and `mcd` are imported for coverage),
+      #   theorem environments and bibliography in Spanish.
+      # - examples/features.typ: the theorem family (lemma, corollary,
+      #   proposition, example), apa-proof(title:), every apa-stat branch
+      #   (f, r, chi2, z, m, ci with level), format-num, format-p, apa-ci(level:),
+      #   paper-size "a4", font/font-size/region overrides, cover: false,
+      #   repeat-title: false, apa-appendix(letter:, multi:), cite-*(supplement:).
+      # - tests/: rendered strings and input validation of the helpers.
+      # - template/main.typ: compiled separately below against this checkout.
+      - name: Compile Feature Coverage Paper (PDF/UA-1)
+        run: typst compile --root . --pdf-standard ua-1 examples/features.typ output-features.pdf
 
       - name: Compile Minimal / Professional Paper (PDF/UA-1)
         run: typst compile --root . --pdf-standard ua-1 examples/minimal.typ output-minimal.pdf
@@ -34,3 +61,14 @@ jobs:
 
       - name: Run statistics test suite
         run: bash tests/run.sh
+
+      - name: Run template gate regression tests
+        run: bash tests/ci-gates.sh
+
+      # The template is published through Typst Universe and imports the released
+      # package by version, so no step above exercises it. The gate lives in
+      # tests/template-gate.sh: it rewrites that import to src/lib.typ and compiles
+      # the template against this checkout, failing when the pin is absent, malformed,
+      # or ahead of typst.toml. A lagging pin stays allowed.
+      - name: Compile the template against the local package (PDF/UA-1)
+        run: bash tests/template-gate.sh

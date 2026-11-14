@@ -11,3 +11,6 @@ Thumbs.db
 Desktop.ini
 *:Zone.Identifier
 cutver.ci.toml
+
+# Scratch directory created by tests/template-gate.sh
+.gate-*

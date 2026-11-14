@@ -17,7 +17,7 @@ keywords = [
 ]
 categories = ["paper"]
 compiler = "0.15.0"
-exclude = ["/assets", "/docs", "/examples", "/tests", ".git*"]
+exclude = ["/assets", "/docs", "/examples", "/tests", "/odd", ".git*"]
 
 [template]
 path = "template"

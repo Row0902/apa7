@@ -24,7 +24,7 @@ push = true
 # real release (never on --dry-run), before any file or commit is touched.
 [preflight]
 default_timeout = 600
-examples = "tmp=$(mktemp -d) && typst compile --root . --pdf-standard ua-1 examples/minimal.typ \"$tmp/minimal.pdf\" && typst compile --root . --pdf-standard ua-1 examples/student.typ \"$tmp/student.pdf\" && typst compile --root . --pdf-standard ua-1 examples/spanish_example.typ \"$tmp/spanish.pdf\" && rm -rf \"$tmp\""
+examples = "tmp=$(mktemp -d) && typst compile --root . --pdf-standard ua-1 examples/minimal.typ \"$tmp/minimal.pdf\" && typst compile --root . --pdf-standard ua-1 examples/student.typ \"$tmp/student.pdf\" && typst compile --root . --pdf-standard ua-1 examples/spanish_example.typ \"$tmp/spanish.pdf\" && typst compile --root . --pdf-standard ua-1 examples/features.typ \"$tmp/features.pdf\" && rm -rf \"$tmp\""
 
 [plugins.github-publish]
 runtime = "wasm"

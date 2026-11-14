@@ -13,7 +13,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 - **stat**: `apa-stat(...)` forwards `level` to the confidence-interval branch, so `#apa-stat(ci: (1.20, 10.20), level: 99)` renders `99% CI [1.20, 10.20]`. `level` outside the `ci` branch is rejected instead of being ignored.
 
 ### ✅ Tests
+- **ci**: `tests/ci-gates.sh` extracts the template gate from the workflow and runs it verbatim, asserting the shapes it exists to catch: a broken template body, a pin ahead of `typst.toml`, a template that pins no version, a malformed package version, a lagging pin that must stay allowed, and a template that grows a sibling file.
+- **ci**: the workflow compiles `examples/features.typ`, a new example that exercises the documented surface no other example touched: the theorem family beyond `apa-theorem`/`apa-definition`, `apa-proof(title:)`, every `apa-stat` branch (`f`, `r`, `chi2`, `z`, `m`, `ci` with `level`), `format-num`, `format-p`, `apa-ci(level:)`, the `paper-size`/`font`/`font-size`/`region`/`cover`/`repeat-title` overrides, `apa-appendix(letter:, multi:)` and `cite-*(supplement:)`.
+- **ci**: `template/main.typ` is compiled against this checkout, with the `@preview` import substituted for `src/lib.typ`, so a broken template fails CI instead of the first `typst init` a user runs. The step also fails when the substitution matches nothing and when the template pins a version ahead of `typst.toml`; a lagging pin stays allowed, because `typst init` can only resolve a version Typst Universe already serves.
+- **release**: the cutver preflight now compiles `examples/features.typ` too, so the new example cannot reach a tag unbuilt.
 - **table**: `tests/table.typ` pins that the row form and the flat form produce the same cells, plus the one-column shapes for `auto` and a single track, and `tests/fail/` covers the six rejections.
+
+### 📚 Documentation
+- **ci**: the workflow documents which features each example covers, and why `compiler = "0.15.0"` in `typst.toml` is intentionally older than the `0.15.1` CI toolchain.
 - **figure**: `tests/figure.typ` pins the resolved `alt` of every path (passed through, decorative in both languages) and `tests/fail/` covers a missing `alt`, an empty `alt` and `decorative: true` with a description.
 - **stat**: add a test suite (`tests/run.sh`) asserting the rendered string of every `apa-stat` branch and the compile-time failure of each incomplete-input case; run it in CI.
 
