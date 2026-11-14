@@ -66,53 +66,9 @@ jobs:
         run: bash tests/ci-gates.sh
 
       # The template is published through Typst Universe and imports the released
-      # package by version, so it is never exercised by the steps above. Compile
-      # it against this checkout instead: a broken template body must fail here,
-      # not in the first `typst init` a user runs.
+      # package by version, so no step above exercises it. The gate lives in
+      # tests/template-gate.sh: it rewrites that import to src/lib.typ and compiles
+      # the template against this checkout, failing when the pin is absent, malformed,
+      # or ahead of typst.toml. A lagging pin stays allowed.
       - name: Compile the template against the local package (PDF/UA-1)
-        run: |
-          set -euo pipefail
-          pinned="$(sed -n 's|^#import "@preview/pandect-apa7:\([0-9][0-9.]*\)".*|\1|p' template/main.typ)"
-          if [ -z "$pinned" ]; then
-            echo "::error::template/main.typ does not import @preview/pandect-apa7:<version>; this gate would be a no-op."
-            exit 1
-          fi
-
-          declared="$(sed -n 's/^version *= *"\(.*\)"/\1/p' typst.toml | head -1)"
-          echo "template pins $pinned, package declares $declared"
-
-          # Both must be a real package version. Without this, `0.2` compares
-          # equal to `0.2.0` and a pre-release suffix inverts the ordering below.
-          for version in "$pinned" "$declared"; do
-            if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-              echo "::error::'$version' is not a MAJOR.MINOR.PATCH package version."
-              exit 1
-            fi
-          done
-
-          # The pin must never be ahead of the package: that version cannot exist
-          # yet. It may lag while a Typst Universe submission is pending, because
-          # `typst init` can only resolve a version Universe already serves.
-          newest="$(printf '%s\n%s\n' "$pinned" "$declared" | sort -V | tail -1)"
-          if [ "$newest" != "$declared" ]; then
-            echo "::error::template/main.typ pins $pinned, ahead of typst.toml ($declared)."
-            exit 1
-          fi
-
-          # Copy the whole template directory, not two named files: the template may
-          # be packaged with anything it imports, and a missing file must not turn
-          # into a gate failure of its own.
-          mkdir -p build
-          cp -r template/. build/
-          sed -i 's|@preview/pandect-apa7:[0-9][0-9.]*|../src/lib.typ|' build/main.typ
-          if ! grep -q '"../src/lib.typ"' build/main.typ; then
-            echo "::error::the local import substitution changed nothing; the template gate is broken."
-            exit 1
-          fi
-
-          typst compile --root . --pdf-standard ua-1 build/main.typ output-template.pdf
-
-          # Known limit, stated so nobody over-trusts this gate: it proves the
-          # template body against THIS checkout, not against the pinned release.
-          # A template using a helper that exists only on main still passes here,
-          # so bump the pin only after the release is served by Typst Universe.
+        run: bash tests/template-gate.sh

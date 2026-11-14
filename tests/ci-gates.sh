@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Runs the template gate exactly as CI defines it, then proves it still fails for
-# the shapes it exists to catch.
+# Runs the template gate, which lives in `tests/template-gate.sh`, then proves it
+# still fails for the shapes it exists to catch.
 #
-# The script under test is extracted from `.github/workflows/ci.yml` instead of
-# duplicated here, so a change to the workflow cannot silently diverge from what
-# this test covers.
+# The gate is a versioned script rather than an inline workflow block on purpose:
+# extracting and executing the workflow's `run:` content would execute
+# PR-controlled CI configuration, and this suite must not cross that boundary.
 set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
+
+gate="$PWD/tests/template-gate.sh"
 
 workdir="$(mktemp -d)"
 trap 'rm -rf "$workdir"' EXIT
@@ -15,6 +17,11 @@ trap 'rm -rf "$workdir"' EXIT
 status=0
 passed=0
 failed=0
+
+if [ ! -f "$gate" ]; then
+  printf 'FAIL template gate script is missing: %s\n' "$gate"
+  exit 1
+fi
 
 pass() {
   passed=$((passed + 1))
@@ -31,26 +38,6 @@ fail() {
   done
 }
 
-# Extract the gate: the `run: |` block of the template step, dedented by ten spaces.
-gate="$workdir/gate.sh"
-awk '
-  /- name: Compile the template against the local package/ { found = 1; next }
-  found && /^ *run: \|/ { collecting = 1; next }
-  collecting {
-    if ($0 ~ /^$/) { print ""; next }
-    if ($0 !~ /^          /) exit
-    sub(/^          /, "")
-    print
-  }
-' .github/workflows/ci.yml > "$gate"
-
-if [ ! -s "$gate" ]; then
-  fail "extract the template gate from ci.yml"
-  printf '\n%d passed, %d failed\n' "$passed" "$failed"
-  exit 1
-fi
-pass "extract the template gate from ci.yml"
-
 # A throwaway copy of the tree the gate needs, so each case starts clean.
 seed="$workdir/seed"
 mkdir -p "$seed"
@@ -62,7 +49,9 @@ reset_tree() {
 }
 
 run_gate() {
-  ( cd "$workdir/tree" && bash "$gate" ) 2>&1
+  # Run the copy inside the tree under test: the gate resolves its own project
+  # root from its location, so an absolute path would always test the real repo.
+  ( cd "$workdir/tree" && bash tests/template-gate.sh ) 2>&1
 }
 
 # 1. The shipped template passes, and produces the PDF.

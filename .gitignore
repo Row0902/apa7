@@ -12,5 +12,5 @@ Desktop.ini
 *:Zone.Identifier
 cutver.ci.toml
 
-# CI scratch directory (template gate)
-build/
+# Scratch directory created by tests/template-gate.sh
+.gate-*
